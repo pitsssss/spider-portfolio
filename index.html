@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peter Parker | Software Engineer & AI Engineer</title>
+<meta name="description" content="Full-stack software engineer & AI engineer specializing in LLMs, computer vision, and building scalable systems. Explore my portfolio of AI-powered projects and web applications.">
+<meta name="keywords" content="software engineer, AI engineer, full-stack developer, machine learning, LLMs, computer vision, React, Next.js, Three.js, Python, portfolio">
+<meta name="author" content="Peter Parker">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+<link rel="canonical" href="https://peterparker.dev">
+<meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://peterparker.dev"><meta property="og:site_name" content="Peter Parker"><meta property="og:title" content="Peter Parker | Software & AI Engineer"><meta property="og:description" content="Full-stack engineer specializing in LLMs, computer vision, and scalable systems."><meta property="og:image" content="https://peterparker.dev/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Peter Parker | Software & AI Engineer"><meta name="twitter:description" content="Full-stack engineer specializing in LLMs, computer vision, and scalable systems."><meta name="twitter:image" content="https://peterparker.dev/og-image.png"><meta name="twitter:creator" content="@peterparker">
+<meta name="theme-color" content="#0A0A0F">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕷️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--r:#B11310;--rb:#E23636;--b:#1B1464;--bb:#2B3784;--d:#0A0A0F;--s:#12121A;--t:#E0E0E0;--m:#808080}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--r) var(--s)}
+body{font-family:'DM Sans',sans-serif;background:var(--d);color:var(--t);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--s)}::-webkit-scrollbar-thumb{background:var(--r);border-radius:3px}
+::selection{background:rgba(177,19,16,0.4);color:#fff}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:rgba(10,10,15,0.8);border-bottom:1px solid rgba(177,19,16,0.12)}
+.nav-inner{max-width:1280px;margin:0 auto;padding:14px 32px;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;transition:all 0.3s}
+.nav-logo:hover{color:var(--r);transform:translateY(-1px)}
+.nav-logo .icon{font-size:1.8rem;filter:drop-shadow(0 0 8px rgba(177,19,16,0.5))}
+.nav-links{display:flex;gap:2px}
+.nav-links a{padding:8px 18px;border-radius:10px;text-decoration:none;color:var(--m);font-size:0.85rem;font-weight:500;letter-spacing:0.3px;transition:all 0.3s;position:relative}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(177,19,16,0.12)}
+.nav-links a.active::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:16px;height:2px;background:var(--r);border-radius:2px}
+.menu-btn{display:none;background:none;border:none;color:#fff;cursor:pointer;padding:8px;border-radius:8px;transition:background 0.3s}
+.menu-btn:hover{background:rgba(255,255,255,0.05)}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+#three-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.hero-content{position:relative;z-index:10;max-width:1280px;margin:0 auto;padding:140px 32px 100px;width:100%}
+.hero-badge{display:inline-flex;align-items:center;gap:10px;color:var(--r);font-weight:600;text-transform:uppercase;letter-spacing:4px;font-size:0.8rem;margin-bottom:20px;padding:6px 16px;border:1px solid rgba(177,19,16,0.25);border-radius:100px;background:rgba(177,19,16,0.06);animation:fadeUp 0.7s ease-out both}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--rb);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(4.5rem,11vw,9rem);color:#fff;line-height:0.88;margin-bottom:28px;letter-spacing:-1px;animation:fadeUp 0.7s 0.15s ease-out both}
+.hero-title .red{color:var(--r);text-shadow:0 0 60px rgba(177,19,16,0.6),0 0 120px rgba(177,19,16,0.25),0 0 200px rgba(177,19,16,0.1)}
+.hero-sub{color:var(--m);font-size:clamp(1rem,2vw,1.25rem);max-width:520px;line-height:1.7;margin-bottom:36px;animation:fadeUp 0.7s 0.3s ease-out both;letter-spacing:0.2px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:14px;animation:fadeUp 0.7s 0.45s ease-out both}
+.btn-primary{padding:15px 34px;background:linear-gradient(135deg,var(--r),#8B0F0D);color:#fff;font-weight:700;border:none;border-radius:14px;text-decoration:none;cursor:pointer;transition:all 0.35s;font-size:0.95rem;letter-spacing:0.5px;box-shadow:0 4px 24px rgba(177,19,16,0.3);position:relative;overflow:hidden}
+.btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--rb),var(--r));opacity:0;transition:opacity 0.35s}
+.btn-primary:hover::after{opacity:1}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(177,19,16,0.5)}
+.btn-primary span{position:relative;z-index:1}
+.btn-outline{padding:15px 34px;border:1.5px solid rgba(177,19,16,0.3);color:#fff;font-weight:600;border-radius:14px;text-decoration:none;transition:all 0.35s;font-size:0.95rem;letter-spacing:0.5px;backdrop-filter:blur(12px);background:rgba(177,19,16,0.04)}
+.btn-outline:hover{background:rgba(177,19,16,0.12);border-color:var(--r);transform:translateY(-3px);box-shadow:0 8px 32px rgba(177,19,16,0.2)}
+
+/* SECTIONS */
+section{padding:120px 32px;position:relative}
+#about{padding-top:140px}
+.section-header{text-align:center;margin-bottom:72px}
+.section-label{display:inline-block;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:5px;color:var(--r);margin-bottom:12px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,7vw,4.5rem);color:#fff;margin-bottom:20px;letter-spacing:1px;line-height:1}
+.section-title span{color:var(--r)}
+.divider{display:flex;align-items:center;gap:14px;justify-content:center;max-width:280px;margin:0 auto}
+.divider::before,.divider::after{content:'';height:1.5px;flex:1;background:linear-gradient(90deg,transparent,var(--r),transparent)}
+.divider-dot{width:7px;height:7px;background:var(--r);border-radius:50%;box-shadow:0 0 14px var(--r)}
+.container{max-width:1200px;margin:0 auto}
+
+/* GLASS */
+.glass{backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);background:rgba(18,18,26,0.65);border:1px solid rgba(255,255,255,0.06);border-radius:20px;transition:all 0.4s cubic-bezier(0.25,0.8,0.25,1.2)}
+.glass-hover:hover{border-color:rgba(177,19,16,0.3);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 0 1px rgba(177,19,16,0.1)}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.about-text .lead{color:var(--t);line-height:1.75;margin-bottom:20px;font-size:1.15rem;font-weight:500}
+.about-text p{color:var(--m);line-height:1.75;margin-bottom:16px;font-size:1rem}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px}
+.stat-card{text-align:center;padding:24px 16px;cursor:default}
+.stat-card .val{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--r);transition:all 0.3s}
+.stat-card:hover .val{text-shadow:0 0 20px rgba(177,19,16,0.5)}
+.stat-card .lbl{color:var(--m);font-size:0.8rem;margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+.about-visual{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.about-visual .bg{position:absolute;inset:0;background:linear-gradient(160deg,rgba(177,19,16,0.08),transparent 40%,rgba(27,20,100,0.12) 80%)}
+.about-visual .inner{position:relative;z-index:1;text-align:center;padding:40px}
+.about-visual .emblem{font-size:5rem;animation:float 5s ease-in-out infinite;margin-bottom:20px;filter:drop-shadow(0 0 30px rgba(177,19,16,0.3))}
+.about-visual .quote{color:var(--m);font-style:italic;line-height:1.7;font-size:0.95rem}
+.about-visual .author{color:var(--r);font-family:'Bebas Neue',sans-serif;font-size:1.1rem;margin-top:18px;letter-spacing:1px}
+
+/* SKILLS */
+#skills{background:rgba(18,18,26,0.25)}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:22px}
+.skill-card{padding:32px;position:relative;overflow:hidden}
+.skill-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(177,19,16,0.4),transparent);opacity:0;transition:opacity 0.4s}
+.skill-card:hover::before{opacity:1}
+.skill-card .icon{font-size:2.4rem;margin-bottom:18px;display:block}
+.skill-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:#fff;margin-bottom:18px;letter-spacing:0.5px}
+.skill-tags{display:flex;flex-wrap:wrap;gap:8px}
+.skill-tag{padding:7px 15px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:0.78rem;color:var(--m);transition:all 0.3s;font-weight:500;letter-spacing:0.2px}
+.skill-tag:hover{border-color:rgba(177,19,16,0.35);background:rgba(177,19,16,0.08);color:var(--t);transform:translateY(-1px)}
+
+/* PROJECTS */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:28px}
+.project-card{overflow:hidden}
+.project-card:hover{transform:translateY(-6px)}
+.project-img{height:4px;position:relative}
+.project-img.red{background:linear-gradient(90deg,var(--r),#ff6b6b,var(--r));background-size:200% 100%;animation:shimmer 3s ease-in-out infinite}
+.project-img.blue{background:linear-gradient(90deg,var(--bb),#6b8cff,var(--bb));background-size:200% 100%;animation:shimmer 3s ease-in-out infinite}
+.project-body{padding:36px}
+.project-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(177,19,16,0.15);color:var(--r);font-size:0.7rem;font-weight:700;border-radius:100px;text-transform:uppercase;letter-spacing:3px;margin-bottom:16px;border:1px solid rgba(177,19,16,0.2)}
+.project-body h3{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#fff;margin-bottom:12px;letter-spacing:0.5px;transition:color 0.3s}
+.project-card:hover .project-body h3{color:var(--r)}
+.project-body p{color:var(--m);line-height:1.7;margin-bottom:22px;font-size:0.95rem}
+.project-tech{display:flex;flex-wrap:wrap;gap:8px}
+.project-tech span{padding:6px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;font-size:0.75rem;color:var(--m);font-weight:500;letter-spacing:0.3px}
+
+/* CONTACT */
+#contact{background:rgba(18,18,26,0.25)}
+.contact-inner{max-width:640px;margin:0 auto;text-align:center}
+.contact-inner>p{color:var(--m);font-size:1.1rem;line-height:1.7;margin-bottom:44px}
+.form-card{padding:44px;text-align:left}
+.form-group{margin-bottom:22px}
+.form-group label{display:block;font-size:0.8rem;font-weight:600;color:var(--t);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+.form-group input,.form-group textarea{width:100%;padding:15px 18px;background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.08);border-radius:14px;color:#fff;font-family:inherit;font-size:0.95rem;transition:all 0.3s;outline:none}
+.form-group input:focus,.form-group textarea:focus{border-color:rgba(177,19,16,0.5);box-shadow:0 0 0 4px rgba(177,19,16,0.08);background:rgba(255,255,255,0.05)}
+.form-group textarea{resize:none;min-height:120px}
+.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,0.2)}
+.submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--r),#8B0F0D);color:#fff;font-weight:700;border:none;border-radius:14px;font-size:0.95rem;cursor:pointer;transition:all 0.35s;letter-spacing:0.5px;box-shadow:0 4px 20px rgba(177,19,16,0.25)}
+.submit-btn:hover{background:linear-gradient(135deg,var(--rb),var(--r));box-shadow:0 8px 36px rgba(177,19,16,0.45);transform:translateY(-2px)}
+.social-links{display:flex;justify-content:center;gap:18px;margin-top:44px}
+.social-link{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--m);text-decoration:none;font-weight:700;font-size:0.85rem;transition:all 0.3s;letter-spacing:1px}
+.social-link:hover{color:var(--r);border-color:rgba(177,19,16,0.4);transform:translateY(-3px);box-shadow:0 8px 24px rgba(177,19,16,0.2)}
+
+/* FOOTER */
+footer{border-top:1px solid rgba(255,255,255,0.04);padding:36px 32px;text-align:center}
+footer p{color:var(--m);font-size:0.85rem;letter-spacing:0.3px}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes borderPulse{0%,100%{border-color:rgba(177,19,16,0.15)}50%{border-color:rgba(177,19,16,0.35)}}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease-out,transform 0.8s cubic-bezier(0.25,0.8,0.25,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+.mobile-menu{display:none;flex-direction:column;padding:8px 32px 20px;gap:2px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:14px 20px;text-decoration:none;color:var(--m);border-radius:10px;transition:all 0.3s;font-weight:500;font-size:0.95rem}
+.mobile-menu a:hover{color:#fff;background:rgba(177,19,16,0.1)}
+
+@media(max-width:768px){
+  .nav-links{display:none}.menu-btn{display:block}
+  .about-grid{grid-template-columns:1fr}.projects-grid{grid-template-columns:1fr}.skills-grid{grid-template-columns:1fr}
+  .hero-title{font-size:3.5rem}section{padding:80px 20px}.hero-content{padding:120px 20px 80px}
+  .form-card{padding:28px}
+}
+</style>
+</head>
+<body>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"Peter Parker","givenName":"Peter","familyName":"Parker","url":"https://peterparker.dev","jobTitle":"Software Engineer & AI Engineer","knowsAbout":["Artificial Intelligence","Machine Learning","Large Language Models","Computer Vision","Full-Stack Development","Cloud Architecture","Data Engineering"],"sameAs":["https://github.com/peterparker","https://linkedin.com/in/peterparker","https://twitter.com/peterparker"]}
+</script>
+
+<nav class="nav" role="navigation" aria-label="Main">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo" aria-label="Home"><span class="icon">🕷️</span>PETER PARKER</a>
+    <div class="nav-links" id="navLinks">
+      <a href="#hero" class="active">Home</a><a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="#contact">Contact</a>
+    </div>
+    <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu" role="menu">
+    <a href="#hero" onclick="toggleMenu()">Home</a><a href="#about" onclick="toggleMenu()">About</a><a href="#skills" onclick="toggleMenu()">Skills</a><a href="#projects" onclick="toggleMenu()">Projects</a><a href="#contact" onclick="toggleMenu()">Contact</a>
+  </div>
+</nav>
+
+<canvas id="three-canvas" aria-hidden="true"></canvas>
+
+<main>
+
+<section class="hero" id="hero" aria-label="Hero">
+  <div class="hero-content">
+    <div class="hero-badge">Software Engineer & AI Engineer</div>
+    <h1 class="hero-title">PETER<br><span class="red">PARKER</span></h1>
+    <p class="hero-sub">Building intelligent systems and beautiful software. With great power comes great responsibility — and great code.</p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-primary"><span>View My Work</span></a>
+      <a href="#contact" class="btn-outline">Get In Touch</a>
+    </div>
+  </div>
+</section>
+
+<section id="about" aria-labelledby="about-h"><div class="container">
+  <div class="section-header reveal"><p class="section-label">Who I Am</p><h2 id="about-h" class="section-title">ABOUT <span>ME</span></h2><div class="divider"><div class="divider-dot"></div></div></div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p class="lead">I'm a full-stack software engineer and AI engineer passionate about building products that make a difference. Like a certain web-slinger, I believe technology should serve the greater good.</p>
+      <p>With expertise spanning from deep learning architectures to production-grade web applications, I bridge the gap between cutting-edge AI research and real-world software engineering. I specialize in LLMs, computer vision, and building scalable systems from the ground up.</p>
+      <div class="stats-grid">
+        <div class="stat-card glass"><div class="val">5+</div><div class="lbl">Years Experience</div></div>
+        <div class="stat-card glass"><div class="val">30+</div><div class="lbl">Projects Shipped</div></div>
+        <div class="stat-card glass"><div class="val">3</div><div class="lbl">Papers Published</div></div>
+        <div class="stat-card glass"><div class="val">∞</div><div class="lbl">Coffee Consumed</div></div>
+      </div>
+    </div>
+    <div class="about-visual glass reveal">
+      <div class="bg"></div>
+      <div class="inner">
+        <div class="emblem">🕷️</div>
+        <blockquote class="quote">&ldquo;Whatever life holds in store for me, I will never forget these words: With great power comes great responsibility.&rdquo;</blockquote>
+        <p class="author">— Uncle Ben</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="skills" aria-labelledby="skills-h"><div class="container">
+  <div class="section-header reveal"><p class="section-label">What I Do</p><h2 id="skills-h" class="section-title">MY <span>POWERS</span></h2><div class="divider"><div class="divider-dot"></div></div></div>
+  <div class="skills-grid">
+    <div class="skill-card glass glass-hover reveal"><span class="icon">🧠</span><h3>AI & Machine Learning</h3><div class="skill-tags"><span class="skill-tag">LLMs (GPT, Claude, Gemini)</span><span class="skill-tag">PyTorch & TensorFlow</span><span class="skill-tag">Computer Vision</span><span class="skill-tag">NLP & Transformers</span><span class="skill-tag">RAG Systems</span><span class="skill-tag">Model Fine-tuning</span></div></div>
+    <div class="skill-card glass glass-hover reveal"><span class="icon">⚡</span><h3>Backend Engineering</h3><div class="skill-tags"><span class="skill-tag">Python (FastAPI, Django)</span><span class="skill-tag">Node.js & TypeScript</span><span class="skill-tag">Go & Rust</span><span class="skill-tag">PostgreSQL & MongoDB</span><span class="skill-tag">Redis & Message Queues</span><span class="skill-tag">Microservices</span></div></div>
+    <div class="skill-card glass glass-hover reveal"><span class="icon">🎨</span><h3>Frontend Development</h3><div class="skill-tags"><span class="skill-tag">React & Next.js</span><span class="skill-tag">Three.js & WebGL</span><span class="skill-tag">TypeScript</span><span class="skill-tag">Tailwind CSS</span><span class="skill-tag">State Management</span><span class="skill-tag">Performance Optimization</span></div></div>
+    <div class="skill-card glass glass-hover reveal"><span class="icon">☁️</span><h3>Cloud & DevOps</h3><div class="skill-tags"><span class="skill-tag">AWS & GCP</span><span class="skill-tag">Docker & Kubernetes</span><span class="skill-tag">CI/CD Pipelines</span><span class="skill-tag">Terraform</span><span class="skill-tag">Monitoring & Logging</span><span class="skill-tag">Serverless Architecture</span></div></div>
+    <div class="skill-card glass glass-hover reveal"><span class="icon">🕸️</span><h3>Data Engineering</h3><div class="skill-tags"><span class="skill-tag">Apache Spark</span><span class="skill-tag">Kafka</span><span class="skill-tag">Data Pipelines</span><span class="skill-tag">Snowflake</span><span class="skill-tag">dbt</span><span class="skill-tag">Vector Databases</span></div></div>
+    <div class="skill-card glass glass-hover reveal"><span class="icon">🔮</span><h3>Research & Innovation</h3><div class="skill-tags"><span class="skill-tag">Paper Implementation</span><span class="skill-tag">Experimental Design</span><span class="skill-tag">A/B Testing</span><span class="skill-tag">System Architecture</span><span class="skill-tag">Technical Writing</span><span class="skill-tag">Open Source</span></div></div>
+  </div>
+</div></section>
+
+<section id="projects" aria-labelledby="projects-h"><div class="container">
+  <div class="section-header reveal"><p class="section-label">What I've Built</p><h2 id="projects-h" class="section-title">FEATURED <span>MISSIONS</span></h2><div class="divider"><div class="divider-dot"></div></div></div>
+  <div class="projects-grid">
+    <article class="project-card glass glass-hover reveal"><div class="project-img red"></div><div class="project-body"><span class="project-tag">AI/ML</span><h3>NeuroWeb AI Platform</h3><p>End-to-end platform for deploying and monitoring LLM-powered applications. Built with FastAPI, React, and Kubernetes. Handles 10M+ requests daily.</p><div class="project-tech"><span>Python</span><span>FastAPI</span><span>React</span><span>Kubernetes</span><span>PostgreSQL</span><span>Redis</span></div></div></article>
+    <article class="project-card glass glass-hover reveal"><div class="project-img blue"></div><div class="project-body"><span class="project-tag">Computer Vision</span><h3>VisionQuest CV Pipeline</h3><p>Real-time computer vision pipeline for industrial quality inspection. Custom YOLO models achieving 99.7% accuracy on production data.</p><div class="project-tech"><span>PyTorch</span><span>ONNX</span><span>TensorRT</span><span>Go</span><span>gRPC</span><span>AWS</span></div></div></article>
+    <article class="project-card glass glass-hover reveal"><div class="project-img red"></div><div class="project-body"><span class="project-tag">Full Stack</span><h3>SpiderSense Analytics</h3><p>Real-time analytics dashboard with anomaly detection. 3D data visualizations with Three.js and predictive insights powered by custom ML models.</p><div class="project-tech"><span>Next.js</span><span>Three.js</span><span>D3.js</span><span>Python</span><span>MLflow</span><span>GCP</span></div></div></article>
+    <article class="project-card glass glass-hover reveal"><div class="project-img blue"></div><div class="project-body"><span class="project-tag">LLM</span><h3>CodeWeaver AI Assistant</h3><p>AI coding assistant specialized in code review and refactoring. Built on fine-tuned LLMs with RAG over documentation and codebases.</p><div class="project-tech"><span>LangChain</span><span>OpenAI</span><span>Pinecone</span><span>TypeScript</span><span>VSCode API</span><span>Docker</span></div></div></article>
+  </div>
+</div></section>
+
+<section id="contact" aria-labelledby="contact-h"><div class="container"><div class="contact-inner">
+  <div class="section-header reveal"><p class="section-label">Let's Talk</p><h2 id="contact-h" class="section-title">GET IN <span>TOUCH</span></h2><div class="divider"><div class="divider-dot"></div></div></div>
+  <p class="reveal">Got a project that needs a hero? Whether it's AI, full-stack development, or something entirely new — I'm always up for a challenge.</p>
+  <div class="form-card glass reveal">
+    <form onsubmit="alert('Thanks for reaching out! 🕸️');return false">
+      <div class="form-group"><label for="name">Name</label><input id="name" type="text" placeholder="Peter Parker" autocomplete="name"></div>
+      <div class="form-group"><label for="email">Email</label><input id="email" type="email" placeholder="peter@dailybugle.com" autocomplete="email"></div>
+      <div class="form-group"><label for="message">Message</label><textarea id="message" placeholder="I need a hero..."></textarea></div>
+      <button type="submit" class="submit-btn">Send Message 🕸️</button>
+    </form>
+  </div>
+  <div class="social-links reveal">
+    <a href="#" class="social-link glass" aria-label="GitHub">GH</a>
+    <a href="#" class="social-link glass" aria-label="LinkedIn">LI</a>
+    <a href="#" class="social-link glass" aria-label="Twitter">TW</a>
+    <a href="#" class="social-link glass" aria-label="Email">@</a>
+  </div>
+</div></div></section>
+
+</main>
+
+<footer role="contentinfo"><p>🕷️ &copy; 2025 Peter Parker. With great power comes great responsibility.</p></footer>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ── SETUP ──
+const canvas = document.getElementById('three-canvas');
+const renderer = new THREE.WebGLRenderer({canvas, antialias: true, alpha: true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.3;
+renderer.shadowMap.enabled = true;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0A0A0F, 0.00015);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 60);
+camera.position.set(0, 0.3, 6);
+camera.lookAt(0, 0, 0);
+
+// ── LIGHTING ──
+scene.add(new THREE.AmbientLight(0x334466, 0.6));
+const keyLight = new THREE.PointLight(0xE23636, 30, 12); keyLight.position.set(4, 2, 5); scene.add(keyLight);
+const fillLight = new THREE.PointLight(0x2B3784, 18, 10); fillLight.position.set(-4, -1, 3); scene.add(fillLight);
+const rimLight = new THREE.SpotLight(0xffffff, 25, 15, 0.6, 0.6); rimLight.position.set(0, 4, 6); scene.add(rimLight);
+
+// ── GROUND GRID ──
+const gridHelper = new THREE.PolarGridHelper(8, 32, 24, 64, 0x1B1464, 0x1B1464);
+gridHelper.position.y = -3;
+scene.add(gridHelper);
+
+// ── NYC SKYLINE (Wireframe buildings) ──
+const buildings = [];
+const buildingMat = new THREE.MeshStandardMaterial({color: 0x1a1a2e, metalness: 0.3, roughness: 0.8, emissive: 0x000011, emissiveIntensity: 0.2});
+const buildingWire = new THREE.MeshBasicMaterial({color: 0x2B3784, wireframe: true, transparent: true, opacity: 0.15});
+
+for (let i = 0; i < 40; i++) {
+  const h = 0.3 + Math.random() * 3.5;
+  const w = 0.15 + Math.random() * 0.5;
+  const d = 0.15 + Math.random() * 0.5;
+  const angle = (Math.random() - 0.5) * Math.PI * 0.7;
+  const radius = 2.5 + Math.random() * 4;
+  const x = Math.cos(angle) * radius;
+  const z = Math.sin(angle) * radius - 1;
+
+  const bldg = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), buildingMat);
+  bldg.position.set(x, -3.5 + h / 2, z);
+  scene.add(bldg);
+
+  const wire = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), buildingWire);
+  wire.position.copy(bldg.position);
+  scene.add(wire);
+
+  buildings.push({mesh: bldg, wire, baseY: bldg.position.y});
+}
+
+// ── SPIDER EMBLEM ──
+const emblemGroup = new THREE.Group();
+const shape = new THREE.Shape();
+const s = 0.9;
+shape.moveTo(0, s * 0.8);
+shape.bezierCurveTo(s * 0.4, s * 0.8, s * 0.6, s * 0.3, s * 0.55, 0);
+shape.bezierCurveTo(s * 0.5, -s * 0.1, s * 0.3, -s * 0.35, 0, -s * 0.65);
+shape.bezierCurveTo(-s * 0.3, -s * 0.35, -s * 0.5, -s * 0.1, -s * 0.55, 0);
+shape.bezierCurveTo(-s * 0.6, s * 0.3, -s * 0.4, s * 0.8, 0, s * 0.8);
+const bodyGeom = new THREE.ExtrudeGeometry(shape, {depth: 0.1, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 3});
+const bodyMat = new THREE.MeshStandardMaterial({color: 0xB11310, metalness: 0.85, roughness: 0.15, emissive: 0x330000, emissiveIntensity: 0.5});
+const body = new THREE.Mesh(bodyGeom, bodyMat);
+emblemGroup.add(body);
+
+// Eyes
+const eyeMat = new THREE.MeshStandardMaterial({color: 0xffffff, metalness: 0.1, roughness: 0.1, emissive: 0xffffff, emissiveIntensity: 0.8});
+[-0.25, 0.25].forEach(ex => {
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), eyeMat);
+  eye.position.set(ex, 0.35, 0.08); eye.scale.set(1.2, 0.7, 0.4);
+  emblemGroup.add(eye);
+});
+
+// Legs
+const legMat = new THREE.MeshStandardMaterial({color: 0x1B1464, metalness: 0.7, roughness: 0.25, emissive: 0x000022, emissiveIntensity: 0.2});
+for (let side = -1; side <= 1; side += 2) {
+  for (let i = 0; i < 4; i++) {
+    const angle = (Math.PI / 5) * (i + 1) * 0.75;
+    const len = 0.4 + i * 0.12;
+    const legGeom = new THREE.CapsuleGeometry(0.028, len, 6, 10);
+    const leg = new THREE.Mesh(legGeom, legMat);
+    leg.position.set(side * 0.38 * Math.cos(angle), 0.08 - i * 0.22, 0);
+    leg.rotation.z = side * angle;
+    emblemGroup.add(leg);
+  }
+}
+scene.add(emblemGroup);
+
+// ── WEB STRINGS ──
+const webLines = [];
+const webMat = new THREE.LineBasicMaterial({color: 0xB11310, transparent: true, opacity: 0.25, linewidth: 1});
+for (let i = 0; i < 20; i++) {
+  const points = [];
+  const startAngle = (i / 20) * Math.PI * 2;
+  const startRad = 1.2;
+  const endRad = 2 + Math.random() * 3;
+  const startY = Math.sin(i * 0.7) * 0.3;
+  const endY = -2 + Math.random() * 2;
+  points.push(new THREE.Vector3(Math.cos(startAngle) * startRad, startY, Math.sin(startAngle) * startRad));
+  const midX = Math.cos(startAngle) * (startRad + endRad) / 2 + (Math.random() - 0.5) * 0.5;
+  const midY = (startY + endY) / 2 + Math.random() * 0.5;
+  const midZ = Math.sin(startAngle) * (startRad + endRad) / 2;
+  points.push(new THREE.Vector3(midX, midY, midZ));
+  points.push(new THREE.Vector3(Math.cos(startAngle) * endRad + (Math.random() - 0.5) * 1.5, endY, Math.sin(startAngle) * endRad + (Math.random() - 0.5) * 1.5));
+  const curve = new THREE.QuadraticBezierCurve3(points[0], points[1], points[2]);
+  const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(30)), webMat);
+  scene.add(line);
+  webLines.push({line, points, baseOpacity: 0.15 + Math.random() * 0.2});
+}
+
+// ── FLOATING SHAPES ──
+const shapes = [];
+for (let i = 0; i < 12; i++) {
+  let mesh;
+  const r = Math.random();
+  const mat = (color, emissive) => new THREE.MeshStandardMaterial({color, wireframe: true, metalness: 0.6, roughness: 0.2, emissive, emissiveIntensity: 0.25});
+  if (r < 0.3) mesh = new THREE.Mesh(new THREE.OctahedronGeometry(0.12 + Math.random() * 0.22), mat(0xE23636, 0x330000));
+  else if (r < 0.6) mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1 + Math.random() * 0.2), mat(0x2B3784, 0x000033));
+  else if (r < 0.8) mesh = new THREE.Mesh(new THREE.TorusGeometry(0.1 + Math.random() * 0.15, 0.035, 8, 8), mat(0xB11310, 0x330000));
+  else mesh = new THREE.Mesh(new THREE.TetrahedronGeometry(0.12 + Math.random() * 0.18), mat(0xE23636, 0x330000));
+  mesh.position.set((Math.random() - 0.5) * 7, (Math.random() - 0.5) * 5, (Math.random() - 0.5) * 4 - 1);
+  mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+  mesh.userData = {speed: 0.2 + Math.random() * 0.8, rotSpeed: 0.005 + Math.random() * 0.02, floatAmp: 0.3 + Math.random() * 0.7, phase: Math.random() * Math.PI * 2};
+  shapes.push(mesh);
+  scene.add(mesh);
+}
+
+// ── PARTICLE SYSTEM ──
+const particleCount = 500;
+const pGeom = new THREE.BufferGeometry();
+const positions = new Float32Array(particleCount * 3);
+const colors = new Float32Array(particleCount * 3);
+const sizes = new Float32Array(particleCount);
+for (let i = 0; i < particleCount; i++) {
+  const i3 = i * 3;
+  // Spiral / web-like distribution
+  const t = (i / particleCount) * Math.PI * 6;
+  const r = 1 + (i / particleCount) * 5;
+  positions[i3] = Math.cos(t) * r + (Math.random() - 0.5) * 2;
+  positions[i3 + 1] = (Math.random() - 0.5) * 5;
+  positions[i3 + 2] = Math.sin(t) * r + (Math.random() - 0.5) * 2;
+  const mix = Math.random();
+  colors[i3] = mix > 0.6 ? 0.95 : 0.25;
+  colors[i3 + 1] = mix > 0.6 ? 0.25 : 0.1;
+  colors[i3 + 2] = mix > 0.6 ? 0.25 : 0.45;
+  sizes[i] = 0.01 + Math.random() * 0.04;
+}
+pGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+pGeom.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+pGeom.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+const pMat = new THREE.PointsMaterial({
+  size: 0.03, vertexColors: true, transparent: true, opacity: 0.7,
+  blending: THREE.AdditiveBlending, depthWrite: false,
+  sizeAttenuation: true
+});
+const particles = new THREE.Points(pGeom, pMat);
+scene.add(particles);
+
+// ── MOUSE TRACKING ──
+const mouse = {x: 0, y: 0, tx: 0, ty: 0};
+window.addEventListener('mousemove', e => {
+  mouse.tx = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouse.ty = -(e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+// ── ANIMATION LOOP ──
+const clock = new THREE.Clock();
+let scrollY = 0;
+window.addEventListener('scroll', () => { scrollY = window.scrollY; });
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  const dt = Math.min(clock.getDelta(), 0.1);
+
+  // Smooth mouse follow
+  mouse.x += (mouse.tx - mouse.x) * 0.05;
+  mouse.y += (mouse.ty - mouse.y) * 0.05;
+
+  // Scroll parallax
+  const scrollFactor = scrollY / (document.body.scrollHeight - window.innerHeight);
+  const targetCamY = 0.3 - scrollFactor * 1.5;
+  const targetCamZ = 6 + scrollFactor * 2;
+  camera.position.y += (targetCamY - camera.position.y) * 0.03;
+  camera.position.z += (targetCamZ - camera.position.z) * 0.03;
+
+  // Mouse parallax on camera
+  camera.position.x += (mouse.x * 0.6 - camera.position.x) * 0.02;
+  camera.lookAt(0, -0.2 + mouse.y * 0.1, 0);
+
+  // Emblem
+  emblemGroup.rotation.y = Math.sin(t * 0.35) * 0.35 + mouse.x * 0.2;
+  emblemGroup.rotation.z = Math.sin(t * 0.5) * 0.1;
+  emblemGroup.position.y = Math.sin(t * 0.55) * 0.2;
+  emblemGroup.position.x = mouse.x * 0.15;
+
+  // Shapes
+  shapes.forEach((mesh, i) => {
+    mesh.rotation.x += mesh.userData.rotSpeed;
+    mesh.rotation.y += mesh.userData.rotSpeed * 0.7;
+    mesh.position.y += Math.sin(t * mesh.userData.speed + mesh.userData.phase) * 0.003;
+    mesh.position.x += Math.cos(t * 0.3 + i) * 0.001;
+  });
+
+  // Particles
+  particles.rotation.y += 0.0006;
+  particles.rotation.x = Math.sin(t * 0.06) * 0.05;
+
+  // Web lines pulse
+  webLines.forEach((w, i) => {
+    w.line.material.opacity = w.baseOpacity + Math.sin(t * 1.5 + i) * 0.08;
+  });
+
+  // Grid rotation
+  gridHelper.rotation.z += 0.0003;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+// ── RESIZE ──
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ── NAV SCROLL SPY ──
+const navLinks = document.querySelectorAll('.nav-links a, .mobile-menu a');
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll', () => {
+  let current = 'hero';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
+  navLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+});
+
+// ── SCROLL REVEAL ──
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, {threshold: 0.15, rootMargin: '0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Trigger initial reveals
+setTimeout(() => {
+  document.querySelectorAll('.reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) el.classList.add('visible');
+  });
+}, 100);
+</script>
+
+<script>
+function toggleMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.querySelector('.menu-btn');
+  menu.classList.toggle('open');
+  btn.setAttribute('aria-expanded', menu.classList.contains('open'));
+}
+</script>
+
+</body>
+</html>
