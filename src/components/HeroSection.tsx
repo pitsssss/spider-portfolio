@@ -19,7 +19,7 @@ export default function HeroSection() {
           PETER<br/><span style={{ color:'#B11310',textShadow:'0 0 60px rgba(177,19,16,0.6),0 0 120px rgba(177,19,16,0.25)' }}>TOSS</span>
         </h1>
         <p style={{ color:'#808080',fontSize:'clamp(1rem,2vw,1.25rem)',maxWidth:520,lineHeight:1.7,marginBottom:36,animation:'fadeUp 0.7s 0.3s ease-out both' }}>
-          Building intelligent systems and beautiful software. With great power comes great responsibility — and great code.
+          Engineering software that delivers value beyond the code.
         </p>
         <div style={{ display:'flex',flexWrap:'wrap',gap:14,animation:'fadeUp 0.7s 0.45s ease-out both' }}>
           <a href="#projects" style={{ padding:'15px 34px',background:'linear-gradient(135deg,#B11310,#8B0F0D)',color:'#fff',fontWeight:700,borderRadius:14,textDecoration:'none',fontSize:'0.95rem',boxShadow:'0 4px 24px rgba(177,19,16,0.3)' }}>View My Work</a>
