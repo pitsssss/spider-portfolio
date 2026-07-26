@@ -120,7 +120,6 @@ function SkillCard({ skill, index }: { skill: typeof S[0], index: number }) {
         style={{ 
           fontFamily: "'Bebas Neue',sans-serif", 
           fontSize: '1.6rem', 
-          color: '#fff', 
           marginBottom: 12,
           transform: `translateZ(${transform.scale > 1 ? '30px' : '0px'})`,
           transition: 'transform 0.3s ease, color 0.3s ease',
