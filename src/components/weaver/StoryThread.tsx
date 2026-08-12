@@ -36,7 +36,7 @@ export default function StoryThread({ rootRef, reducedMotion }: StoryThreadProps
           readPoint(node as HTMLElement),
         ),
         readPoint(root.querySelector('[data-thread-anchor="skills"]')),
-        readPoint(root.querySelector('[data-thread-anchor="contact"]')),
+        readPoint(root.querySelector('[data-thread-anchor="contact-email"]')),
       ].filter((p): p is Point => !!p)
 
       if (anchors.length < 2) return

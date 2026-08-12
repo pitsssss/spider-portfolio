@@ -1,21 +1,23 @@
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Instrument_Sans, Instrument_Serif } from 'next/font/google'
 import { SITE_URL, site } from '@/content/site'
 import { profile } from '@/content/profile'
 import './globals.css'
 
-const geistSans = Geist({
+const instrumentSans = Instrument_Sans({
   subsets: ['latin'],
-  variable: '--font-geist-sans',
+  variable: '--font-sans',
 })
 
-const geistMono = Geist_Mono({
+const instrumentSerif = Instrument_Serif({
   subsets: ['latin'],
-  variable: '--font-geist-mono',
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
 })
 
 export const viewport: Viewport = {
-  themeColor: '#07090e',
+  themeColor: '#EEE9DF',
   width: 'device-width',
   initialScale: 1,
 }
@@ -57,8 +59,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className={geistSans.className}>
+    <html lang="en" className={`${instrumentSans.variable} ${instrumentSerif.variable}`}>
+      <body className={instrumentSans.className}>
         <a href="#main-content" className="skip-link">Skip to content</a>
         {children}
       </body>

@@ -4,10 +4,10 @@ export const profile = {
   familyName: 'Toss',
   title: 'Full-Stack Software Engineer',
   positioning: 'Software Architecture • Product Engineering • Applied AI',
-  heroMessage: 'I engineer digital products end to end.',
+  heroMessage: 'I engineer systems that move ideas forward.',
   heroSupporting:
     'From requirements and architecture to APIs, interfaces, automation, and applied AI, I build maintainable software that solves real operational problems.',
-  primaryCta: { label: 'Explore Selected Work', href: '#projects' },
+  primaryCta: { label: 'Explore the work →', href: '#projects' },
   secondaryCta: { label: 'Contact Me', href: '#contact' },
   email: 'petertoss2004@gmail.com',
   location: 'Damascus, Syria',

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import WeaverJourney from './WeaverJourney'
+import WeaverJourney, { type IntroPhase } from './WeaverJourney'
 import StoryThread from './StoryThread'
 import JourneyChapter from './JourneyChapter'
 import type { JourneyChapterKey } from './chapterConfig'
@@ -28,20 +28,13 @@ const layers = [
 
 const linkProps = { target: '_blank', rel: 'noopener noreferrer' } as const
 
-const CHAPTER_LABELS: Record<string, { num: string; name: string }> = {
-  hero: { num: '00', name: 'Introduction' },
-  process: { num: '01', name: 'Process' },
-  'project-0': { num: '02', name: 'Selected Work' },
-  skills: { num: '03', name: 'Expertise' },
-  'experience-0': { num: '04', name: 'Experience' },
-  about: { num: '05', name: 'About' },
-  contact: { num: '06', name: 'Contact' },
-}
-
 export default function JourneyExperience() {
   const rootRef = useRef<HTMLDivElement>(null)
+  const heroThreadRef = useRef<SVGPathElement>(null)
   const [reducedMotion, setReducedMotion] = useState(false)
   const [activeChapter, setActiveChapter] = useState<JourneyChapterKey>('hero')
+  const [introPhase, setIntroPhase] = useState<IntroPhase>('idle')
+  const [headlineReady, setHeadlineReady] = useState(false)
   const reduce = useReducedMotion()
 
   useEffect(() => {
@@ -52,45 +45,104 @@ export default function JourneyExperience() {
     return () => query.removeEventListener('change', sync)
   }, [])
 
+  useEffect(() => {
+    if (reduce || reducedMotion) {
+      setHeadlineReady(true)
+      return
+    }
+    if (introPhase === 'reveal' || introPhase === 'idle' || introPhase === 'skipped') {
+      setHeadlineReady(true)
+    }
+  }, [introPhase, reduce, reducedMotion])
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setHeadlineReady(true), 5600)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  useEffect(() => {
+    const root = rootRef.current
+    const path = heroThreadRef.current
+    if (!root || !path) return
+
+    const draw = () => {
+      const w = window.innerWidth
+      const h = window.innerHeight
+      const headline = root.querySelector<HTMLElement>('[data-thread-anchor="headline"]')
+      const cta = root.querySelector<HTMLElement>('[data-thread-anchor="cta"]')
+      const target = cta ?? headline
+      if (!target) return
+
+      const rect = target.getBoundingClientRect()
+      const end = { x: rect.left + rect.width * 0.12, y: rect.top + rect.height * 0.55 }
+      const start = {
+        x: w * (w < 768 ? 0.78 : 0.68),
+        y: h * (w < 768 ? 0.22 : 0.18),
+      }
+      const overshoot = { x: end.x - w * 0.04, y: end.y - h * 0.03 }
+      const c1 = { x: start.x - w * 0.14, y: start.y + h * 0.06 }
+      const c2 = { x: overshoot.x + w * 0.08, y: overshoot.y - h * 0.04 }
+      path.setAttribute(
+        'd',
+        `M ${start.x} ${start.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${overshoot.x} ${overshoot.y} S ${end.x} ${end.y}, ${end.x} ${end.y}`,
+      )
+    }
+
+    draw()
+    window.addEventListener('resize', draw)
+    return () => window.removeEventListener('resize', draw)
+  }, [])
+
   const onChapterChange = (key: JourneyChapterKey) => setActiveChapter(key)
-  const chapterLabel = CHAPTER_LABELS[activeChapter] ?? CHAPTER_LABELS.hero
 
   return (
     <div
       ref={rootRef}
-      className={reducedMotion ? `${styles.root} ${styles.static}` : styles.root}
+      className={[
+        styles.root,
+        reducedMotion ? styles.static : '',
+        headlineReady ? styles.headlineReady : '',
+      ].filter(Boolean).join(' ')}
       data-active-chapter={activeChapter}
-      data-chapter-label={`${chapterLabel.num} ${chapterLabel.name}`}
+      data-intro-phase={introPhase}
     >
-      <WeaverJourney rootRef={rootRef} reducedMotion={reducedMotion} onChapterChange={onChapterChange} />
+      <div className={styles.atmosphere} aria-hidden="true" />
+      <WeaverJourney
+        rootRef={rootRef}
+        reducedMotion={reducedMotion}
+        onChapterChange={onChapterChange}
+        onIntroPhase={setIntroPhase}
+      />
       <StoryThread rootRef={rootRef} reducedMotion={reducedMotion} />
+      <svg className={styles.heroThread} aria-hidden="true">
+        <path
+          ref={heroThreadRef}
+          className={introPhase === 'pulse' || introPhase === 'reveal' ? styles.heroThreadActive : ''}
+          d=""
+          fill="none"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
 
-      <JourneyChapter chapterKey="hero" id="hero" index="00" label="Introduction" threadAnchor="hero" className={styles.hero}>
-        <p className={styles.eyebrow}>{profile.positioning}</p>
-        <p className={styles.name}>{profile.name}</p>
-        <div className={styles.maskStack} aria-label={profile.heroMessage}>
-          {['I engineer digital', 'products end to end.'].map((line) => (
-            <div key={line} className={styles.lineMask}>
-              <motion.h1
-                className={styles.display}
-                initial={reduce ? false : { y: '110%' }}
-                whileInView={reduce ? undefined : { y: 0 }}
-                viewport={{ once: true, amount: 0.8 }}
-                transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-              >
-                {line}
-              </motion.h1>
-            </div>
-          ))}
-        </div>
+      <JourneyChapter chapterKey="hero" id="hero" index="01" label="Introduction" threadAnchor="hero" className={styles.hero}>
+        <p className={styles.eyebrow}>{profile.title}</p>
+        <h1 id="hero-title" className={styles.heroTitle} data-thread-anchor="headline">
+          <span className={styles.lineMask}>
+            <span className={`${styles.heroLine} ${styles.serif}`}>I engineer systems that</span>
+          </span>
+          <span className={styles.lineMask}>
+            <span className={`${styles.heroLine} ${styles.serif}`}>
+              move ideas <em>forward.</em>
+            </span>
+          </span>
+        </h1>
         <p className={styles.lede}>{profile.heroSupporting}</p>
-        <div className={styles.actions}>
-          <a href={profile.primaryCta.href} className={styles.btnPrimary}>{profile.primaryCta.label}</a>
-          <a href={profile.secondaryCta.href} className={styles.btnSecondary}>{profile.secondaryCta.label}</a>
-        </div>
+        <a href={profile.primaryCta.href} className={styles.cta} data-thread-anchor="cta">
+          {profile.primaryCta.label}
+        </a>
       </JourneyChapter>
 
-      <JourneyChapter chapterKey="process" index="01" label="Process" align="right" threadAnchor="process" className={styles.process}>
+      <JourneyChapter chapterKey="process" index="02" label="Process" align="right" threadAnchor="process" className={styles.process}>
         <h2 className={styles.displayMd}>From Complexity to Clarity</h2>
         <ul className={styles.milestones}>
           {(architecture?.items ?? []).map((item, i) => (
@@ -107,7 +159,7 @@ export default function JourneyExperience() {
           <JourneyChapter
             key={project.slug}
             chapterKey={`project-${index}` as JourneyChapterKey}
-            index={`02.${String(index + 1).padStart(2, '0')}`}
+            index={`03.${String(index + 1).padStart(2, '0')}`}
             label="Selected Work"
             align={index % 2 === 0 ? 'left' : 'right'}
             threadAnchor={`project-${index}`}
@@ -117,7 +169,7 @@ export default function JourneyExperience() {
             <div className={styles.projectLayout}>
               <div className={styles.projectCopy}>
                 <p className={styles.eyebrow}>{project.category}</p>
-                <h3 className={styles.displayMd}>{project.shortTitle ?? project.title}</h3>
+                <h3 className={`${styles.displayMd} ${styles.serif}`}>{project.shortTitle ?? project.title}</h3>
                 {project.shortTitle && <p className={styles.subtitle}>{project.title}</p>}
                 <p className={styles.role}>{project.role}</p>
                 <p className={styles.lede}>{project.summary}</p>
@@ -134,10 +186,10 @@ export default function JourneyExperience() {
               {project.image && (
                 <motion.div
                   className={styles.artPlane}
-                  initial={reduce ? false : { opacity: 0, scale: 0.96 }}
-                  whileInView={reduce ? undefined : { opacity: 1, scale: 1 }}
-                  viewport={{ once: false, amount: 0.45 }}
-                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                  initial={reduce ? false : { opacity: 0, y: 18 }}
+                  whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.35 }}
+                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <img src={project.image} alt="" />
                 </motion.div>
@@ -147,11 +199,11 @@ export default function JourneyExperience() {
         ))}
       </div>
 
-      <JourneyChapter chapterKey="skills" id="skills" index="03" label="Expertise" threadAnchor="skills" className={styles.skills}>
+      <JourneyChapter chapterKey="skills" id="skills" index="04" label="Expertise" threadAnchor="skills" className={styles.skills}>
         <h2 id="skills-title" className={styles.displayMd}>Engineering Expertise</h2>
         <div className={styles.rails}>
           {layers.map((layer, i) => (
-            <div key={layer.name} className={styles.rail} style={{ ['--rail-offset' as string]: `${i * 12}px` }}>
+            <div key={layer.name} className={styles.rail} style={{ ['--rail-offset' as string]: `${i * 10}px` }}>
               <h3>{layer.name}</h3>
               <p>{layer.items.join('  /  ')}</p>
             </div>
@@ -165,7 +217,7 @@ export default function JourneyExperience() {
           <JourneyChapter
             key={`${item.organization}-${item.title}`}
             chapterKey={`experience-${index}` as JourneyChapterKey}
-            index={`04.${String(index + 1).padStart(2, '0')}`}
+            index={`05.${String(index + 1).padStart(2, '0')}`}
             label="Experience"
             align={index % 2 === 0 ? 'right' : 'left'}
             className={styles.experience}
@@ -183,8 +235,8 @@ export default function JourneyExperience() {
         ))}
       </div>
 
-      <JourneyChapter chapterKey="about" id="about" index="05" label="About" align="left" className={styles.about}>
-        <h2 id="about-title" className={styles.displayMd}>{profile.name}</h2>
+      <JourneyChapter chapterKey="about" id="about" index="06" label="About" align="left" className={styles.about}>
+        <h2 id="about-title" className={`${styles.displayMd} ${styles.serif}`}>{profile.name}</h2>
         <p className={styles.eyebrow}>{profile.title}</p>
         {profile.about.map((paragraph) => (
           <p key={paragraph} className={styles.lede}>{paragraph}</p>
@@ -192,18 +244,12 @@ export default function JourneyExperience() {
         <p className={styles.tools}>{profile.location}</p>
       </JourneyChapter>
 
-      <JourneyChapter chapterKey="contact" id="contact" index="06" label="Contact" align="center" threadAnchor="contact" className={styles.contact}>
-        <h2 id="contact-title" className={styles.display}>{profile.contactLead}</h2>
+      <JourneyChapter chapterKey="contact" id="contact" index="07" label="Contact" align="center" threadAnchor="contact" className={styles.contact}>
+        <h2 id="contact-title" className={`${styles.display} ${styles.serif}`}>{profile.contactLead}</h2>
         <p className={styles.lede}>{profile.contactSupport}</p>
-        <motion.a
-          href={social.email.href}
-          className={styles.email}
-          data-thread-anchor="contact-email"
-          whileHover={reduce ? undefined : { scale: 1.01 }}
-          transition={{ duration: 0.25 }}
-        >
+        <a href={social.email.href} className={styles.email} data-thread-anchor="contact-email">
           {profile.email}
-        </motion.a>
+        </a>
         <div className={styles.actions}>
           {socialLinks.map((link) => (
             <a key={link.label} href={link.href} className={styles.textLink} {...(link.external ? linkProps : {})}>

@@ -15,15 +15,28 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 72% 58%, rgba(120, 231, 255, 0.06), transparent 34%),
-    radial-gradient(circle at 18% 22%, rgba(255, 139, 92, 0.04), transparent 38%),
-    #07090e;
+    radial-gradient(ellipse 70% 55% at 72% 42%, rgba(54, 203, 232, 0.14), transparent 58%),
+    radial-gradient(ellipse 50% 40% at 18% 70%, rgba(243, 166, 59, 0.08), transparent 55%),
+    linear-gradient(180deg, #f4f0e7 0%, #eee9df 42%, #e5eef2 100%);
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.35s ease;
 }
 
-.fallbackActive .fallback,
-.fallbackActive canvas {
+.fallback::after {
+  content: '';
+  position: absolute;
+  inset: 12% 8% auto auto;
+  width: min(42vw, 360px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(243, 166, 59, 0.35), transparent 28%),
+    radial-gradient(circle at 50% 50%, transparent 34%, rgba(54, 203, 232, 0.12) 35%, transparent 62%);
+  border: 1px solid rgba(54, 203, 232, 0.18);
+  opacity: 0.55;
+}
+
+.fallbackActive .fallback {
   opacity: 1;
 }
 
@@ -31,6 +44,9 @@
   display: none;
 }
 
-.fallbackActive .fallback {
-  opacity: 1;
+@media (max-width: 768px) {
+  .fallback::after {
+    width: min(58vw, 240px);
+    inset: 10% 4% auto auto;
+  }
 }

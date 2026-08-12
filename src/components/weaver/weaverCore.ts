@@ -50,6 +50,39 @@ export function frameModelRoot(root: THREE.Object3D): THREE.Vector3 {
   return box.getSize(new THREE.Vector3())
 }
 
+/** Lift dark GLB shells toward readable gunmetal for the light production scene only. */
+export function liftWeaverMaterials(root: THREE.Object3D): void {
+  root.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return
+    const materials = Array.isArray(object.material) ? object.material : [object.material]
+    const nextMats = materials.map((mat) => {
+      const next = mat.clone()
+      if (next instanceof THREE.MeshStandardMaterial || next instanceof THREE.MeshPhysicalMaterial) {
+        const c = next.color
+        const luminance = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+        const isCyan = c.b > 0.45 && c.g > 0.35 && c.r < 0.45
+        const isAmber = c.r > 0.55 && c.g > 0.25 && c.b < 0.35
+        if (!isCyan && !isAmber && luminance < 0.22) {
+          next.color.setRGB(0.18, 0.2, 0.22)
+          next.metalness = Math.min(0.85, Math.max(0.45, next.metalness))
+          next.roughness = Math.min(0.55, Math.max(0.28, next.roughness))
+          next.envMapIntensity = 1.15
+        }
+        if (isAmber) {
+          next.emissive = new THREE.Color(0xf3a63b)
+          next.emissiveIntensity = Math.max(next.emissiveIntensity, 0.55)
+        }
+        if (isCyan) {
+          next.emissive = new THREE.Color(0x36cbe8)
+          next.emissiveIntensity = Math.max(next.emissiveIntensity, 0.25)
+        }
+      }
+      return next
+    })
+    object.material = Array.isArray(object.material) ? nextMats : nextMats[0]
+  })
+}
+
 export function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t
 }

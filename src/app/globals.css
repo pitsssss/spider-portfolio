@@ -1,19 +1,20 @@
 :root {
-  --bg: #07090e;
-  --surface: #10141c;
-  --text: #f1efe8;
-  --muted: #9299a8;
-  --cyan: #78e7ff;
-  --amber: #ff8b5c;
-  --border: rgba(255,255,255,.1);
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --bg: #EEE9DF;
+  --mist: #CADDE3;
+  --surface: #E4E0D6;
+  --text: #162027;
+  --muted: #5A6670;
+  --cyan: #36CBE8;
+  --amber: #F3A63B;
+  --border: rgba(22, 32, 39, 0.12);
+  --font-ui: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-serif), ui-serif, Georgia, serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--cyan) var(--surface); overflow-x: hidden; }
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-ui);
   background: var(--bg);
   color: var(--text);
   overflow-x: hidden;
@@ -22,12 +23,12 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--surface); }
 ::-webkit-scrollbar-thumb { background: var(--cyan); }
-::selection { background: rgba(120,231,255,0.22); color: var(--text); }
+::selection { background: rgba(54, 203, 232, 0.28); color: var(--text); }
 
 .skip-link {
   position: absolute; left: 16px; top: -48px; z-index: 200;
-  padding: 10px 16px; background: var(--cyan); color: var(--bg);
-  font-weight: 600; font-family: var(--font-mono); font-size: 0.75rem;
+  padding: 10px 16px; background: var(--cyan); color: #fff;
+  font-weight: 600; font-size: 0.75rem;
   letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
 }
 .skip-link:focus,
@@ -41,15 +42,13 @@ body {
 
 .not-found {
   min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 24px; text-align: center; gap: 16px;
+  padding: 24px; text-align: center; gap: 16px; background: var(--bg);
 }
-.not-found h1 { font-size: 4rem; font-weight: 500; color: var(--cyan); }
+.not-found h1 { font-family: var(--font-display); font-size: 4rem; font-weight: 400; color: var(--text); }
 .not-found p { color: var(--muted); font-size: 1.1rem; margin-bottom: 12px; }
 .not-found a {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 13px 22px; background: var(--cyan); color: var(--bg);
-  font-weight: 500; text-decoration: none;
-  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; font-family: var(--font-mono);
+  display: inline-flex; color: var(--text); text-decoration: underline;
+  font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
 }
 
 @media (prefers-reduced-motion: reduce) {
