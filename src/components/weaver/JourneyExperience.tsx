@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import MacbookJourney from '../macbook/MacbookJourney'
+import { useJourneySmoothScroll } from '../macbook/useJourneySmoothScroll'
+import { getViewportTier, type ViewportTier } from '../macbook/macbookCore'
 import JourneyChapter from './JourneyChapter'
 import type { JourneyChapterKey } from './chapterConfig'
 import { profile } from '@/content/profile'
@@ -31,6 +33,7 @@ export default function JourneyExperience() {
   const rootRef = useRef<HTMLDivElement>(null)
   const [reducedMotion, setReducedMotion] = useState(false)
   const [activeChapter, setActiveChapter] = useState<JourneyChapterKey>('hero')
+  const [viewportTier, setViewportTier] = useState<ViewportTier>('desktop')
   const reduce = useReducedMotion()
 
   useEffect(() => {
@@ -41,7 +44,18 @@ export default function JourneyExperience() {
     return () => query.removeEventListener('change', sync)
   }, [])
 
+  useEffect(() => {
+    const sync = () => setViewportTier(getViewportTier())
+    sync()
+    window.addEventListener('resize', sync)
+    return () => window.removeEventListener('resize', sync)
+  }, [])
+
   const onChapterChange = (key: JourneyChapterKey) => setActiveChapter(key)
+
+  const smoothScrollEnabled = !reducedMotion && !reduce && viewportTier !== 'mobile'
+
+  useJourneySmoothScroll({ enabled: smoothScrollEnabled })
 
   return (
     <div
@@ -191,23 +205,25 @@ export default function JourneyExperience() {
       </JourneyChapter>
 
       <JourneyChapter chapterKey="contact" id="contact" index="07" label="Contact" align="center" className={styles.contact}>
-        <h2 id="contact-title" className={`${styles.display} ${styles.serif}`}>{profile.contactLead}</h2>
-        <p className={styles.lede}>{profile.contactSupport}</p>
-        <a href={social.email.href} className={styles.email}>
-          {profile.email}
-        </a>
-        <div className={styles.actions}>
-          {socialLinks.map((link) => (
-            <a key={link.label} href={link.href} className={styles.textLink} {...(link.external ? linkProps : {})}>
-              {link.label}
-            </a>
-          ))}
+        <div className={styles.contactCopy}>
+          <h2 id="contact-title" className={`${styles.display} ${styles.serif}`}>{profile.contactLead}</h2>
+          <p className={styles.lede}>{profile.contactSupport}</p>
+          <a href={social.email.href} className={styles.email}>
+            {profile.email}
+          </a>
+          <div className={styles.actions}>
+            {socialLinks.map((link) => (
+              <a key={link.label} href={link.href} className={styles.textLink} {...(link.external ? linkProps : {})}>
+                {link.label}
+              </a>
+            ))}
+          </div>
+          <footer className={styles.finale}>
+            <p>{profile.location}</p>
+            <p>&copy; {new Date().getFullYear()} {profile.name}</p>
+            <a href="#hero" className={styles.textLink}>Back to top</a>
+          </footer>
         </div>
-        <footer className={styles.finale}>
-          <p>{profile.location}</p>
-          <p>&copy; {new Date().getFullYear()} {profile.name}</p>
-          <a href="#hero" className={styles.textLink}>Back to top</a>
-        </footer>
       </JourneyChapter>
     </div>
   )

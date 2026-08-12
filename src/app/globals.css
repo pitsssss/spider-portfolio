@@ -12,7 +12,7 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--cyan) var(--surface); overflow-x: hidden; }
+html { scroll-behavior: auto; scrollbar-width: thin; scrollbar-color: var(--cyan) var(--surface); overflow-x: hidden; }
 body {
   font-family: var(--font-ui);
   background: var(--bg);

@@ -32,6 +32,25 @@ type SidePreset = {
 
 type NarrativeTweak = { y: number; z: number; rotX: number; scale: number }
 
+/** Footer pose: far-right lane beside (not behind) centered contact copy. */
+const contactPose: Record<ViewportTier, MacbookJourneyPose> = {
+  desktop: {
+    offset: { x: 1.92, y: -0.48, z: 0.1 },
+    rotation: { x: 0.1, y: -0.34, z: 0.06 },
+    scaleMul: 0.44,
+  },
+  tablet: {
+    offset: { x: 1.28, y: -0.34, z: 0.06 },
+    rotation: { x: 0.08, y: -0.28, z: 0.05 },
+    scaleMul: 0.42,
+  },
+  mobile: {
+    offset: { x: 0.86, y: -0.18, z: 0.04 },
+    rotation: { x: 0.05, y: -0.22, z: 0.03 },
+    scaleMul: 0.4,
+  },
+}
+
 /** Laptop sits on the side opposite the text column. */
 const sideByContentAlign: Record<ViewportTier, Record<ContentAlign, SidePreset>> = {
   desktop: {
@@ -58,7 +77,7 @@ const narrativeTweak: Record<MacbookNarrativeKey, NarrativeTweak> = {
   skills: { y: -0.1, z: -0.02, rotX: 0.03, scale: 0.94 },
   experience: { y: 0.03, z: 0, rotX: 0, scale: 0.96 },
   about: { y: -0.14, z: 0.04, rotX: 0.03, scale: 0.95 },
-  contact: { y: -0.1, z: -0.04, rotX: 0.02, scale: 0.9 },
+  contact: { y: 0, z: 0, rotX: 0, scale: 1 },
 }
 
 export function chapterToNarrative(key: JourneyChapterKey): MacbookNarrativeKey {
@@ -76,6 +95,8 @@ export function getPoseForAlign(
   tier: ViewportTier,
   narrative: MacbookNarrativeKey,
 ): MacbookJourneyPose {
+  if (narrative === 'contact') return contactPose[tier]
+
   const side = sideByContentAlign[tier][align]
   const tweak = narrativeTweak[narrative]
   return {
@@ -103,7 +124,7 @@ export function getMacbookPoses(tier: ViewportTier): Record<MacbookNarrativeKey,
     skills: getPoseForAlign('left', tier, 'skills'),
     experience: getPoseForAlign('right', tier, 'experience'),
     about: getPoseForAlign('left', tier, 'about'),
-    contact: getPoseForAlign('center', tier, 'contact'),
+    contact: contactPose[tier],
   }
 }
 
@@ -114,7 +135,7 @@ export function interpolateMacbookPose(
 ): MacbookJourneyPose {
   const s = Math.max(0, Math.min(1, smoothstep(t)))
   const mix = (va: number, vb: number) => va + (vb - va) * s
-  return {
+  const base: MacbookJourneyPose = {
     offset: {
       x: mix(a.offset.x, b.offset.x),
       y: mix(a.offset.y, b.offset.y),
@@ -127,8 +148,37 @@ export function interpolateMacbookPose(
     },
     scaleMul: mix(a.scaleMul, b.scaleMul),
   }
+
+  return applyTransitionArc(a, b, base, s)
+}
+
+function applyTransitionArc(
+  from: MacbookJourneyPose,
+  to: MacbookJourneyPose,
+  base: MacbookJourneyPose,
+  t: number,
+): MacbookJourneyPose {
+  const lift = Math.sin(t * Math.PI)
+  const dx = to.offset.x - from.offset.x
+  const dy = to.offset.y - from.offset.y
+  const dyaw = to.rotation.y - from.rotation.y
+  const sideFlip = Math.abs(dx) > 0.35
+
+  return {
+    offset: {
+      x: base.offset.x - dy * 0.14 * lift,
+      y: base.offset.y + (0.32 + Math.abs(dx) * 0.08) * lift,
+      z: base.offset.z + (0.24 + Math.abs(dx) * 0.12) * lift,
+    },
+    rotation: {
+      x: base.rotation.x + (-0.16 - Math.abs(dyaw) * 0.08) * lift,
+      y: base.rotation.y + dyaw * 0.42 * lift + (sideFlip ? Math.sign(dx) * 0.12 * lift : 0),
+      z: base.rotation.z + Math.sign(dx || dyaw || 1) * (sideFlip ? 0.11 : 0.05) * lift,
+    },
+    scaleMul: base.scaleMul + (sideFlip ? 0.08 : 0.04) * lift,
+  }
 }
 
 function smoothstep(t: number): number {
-  return t * t * (3 - 2 * t)
+  return t * t * t * (t * (t * 6 - 15) + 10)
 }

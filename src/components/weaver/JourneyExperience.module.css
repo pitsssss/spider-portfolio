@@ -402,6 +402,25 @@
   align-items: center;
 }
 
+.contactCopy {
+  width: 100%;
+  max-width: min(520px, 54vw);
+  margin: 0 auto;
+  margin-right: clamp(210px, 28vw, 380px);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.contactCopy::before {
+  content: '';
+  position: absolute;
+  inset: -16px -24px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 88% 82% at 42% 48%, rgba(245, 241, 232, 0.9), transparent 72%);
+}
+
 .email {
   display: inline-block;
   font-family: var(--font-display);
@@ -461,6 +480,11 @@
 }
 
 @media (max-width: 767px) {
+  .contactCopy {
+    margin-right: auto;
+    max-width: 92%;
+  }
+
   .heroCopy {
     padding-right: 0;
     max-width: 92%;

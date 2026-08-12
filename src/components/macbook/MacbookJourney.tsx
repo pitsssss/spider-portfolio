@@ -269,7 +269,7 @@ export default function MacbookJourney({
         devHudRef.current.textContent = `${currentNarrative} · ${currentAlign} · ${scroll.local.toFixed(2)}`
       }
 
-      if (scroll.key === 'contact' && scroll.local > 0.55 && !closePlayed && modelReady) {
+      if (scroll.key === 'contact' && scroll.local > 0.72 && !closePlayed && modelReady) {
         closePlayed = true
         playClip('Close')
       }
@@ -313,10 +313,10 @@ export default function MacbookJourney({
 
       if (!staticJourney && modelReady) {
         updateJourneyTarget()
-        dampVec3(basePos, target.position, 3.1, dt, basePos)
-        dampEuler(baseRot, target.rotation, 3.1, dt, tmpEuler)
+        dampVec3(basePos, target.position, 2.15, dt, basePos)
+        dampEuler(baseRot, target.rotation, 2.15, dt, tmpEuler)
         baseRot.copy(tmpEuler)
-        const nextScale = damp(current.scaleMul, target.scaleMul, 3.1, dt)
+        const nextScale = damp(current.scaleMul, target.scaleMul, 2.15, dt)
         current.scaleMul = nextScale
         const breathe = reducedMotion ? 0 : Math.sin(elapsed * 0.34) * 0.014
         journeyGroup.scale.setScalar(nextScale + breathe)
