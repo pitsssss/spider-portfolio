@@ -6,6 +6,7 @@ import WeaverJourney, { type IntroPhase } from './WeaverJourney'
 import StoryThread from './StoryThread'
 import JourneyChapter from './JourneyChapter'
 import type { JourneyChapterKey } from './chapterConfig'
+import type { IntroSnapshot } from './heroIntro'
 import { profile } from '@/content/profile'
 import { featuredProjects } from '@/content/projects'
 import { skillGroups } from '@/content/skills'
@@ -34,6 +35,7 @@ export default function JourneyExperience() {
   const [reducedMotion, setReducedMotion] = useState(false)
   const [activeChapter, setActiveChapter] = useState<JourneyChapterKey>('hero')
   const [introPhase, setIntroPhase] = useState<IntroPhase>('idle')
+  const [introSnapshot, setIntroSnapshot] = useState<IntroSnapshot | null>(null)
   const [headlineReady, setHeadlineReady] = useState(false)
   const reduce = useReducedMotion()
 
@@ -56,7 +58,7 @@ export default function JourneyExperience() {
   }, [introPhase, reduce, reducedMotion])
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setHeadlineReady(true), 5600)
+    const timer = window.setTimeout(() => setHeadlineReady(true), 5800)
     return () => window.clearTimeout(timer)
   }, [])
 
@@ -66,32 +68,41 @@ export default function JourneyExperience() {
     if (!root || !path) return
 
     const draw = () => {
-      const w = window.innerWidth
-      const h = window.innerHeight
-      const headline = root.querySelector<HTMLElement>('[data-thread-anchor="headline"]')
       const cta = root.querySelector<HTMLElement>('[data-thread-anchor="cta"]')
-      const target = cta ?? headline
-      if (!target) return
+      if (!cta) return
 
-      const rect = target.getBoundingClientRect()
-      const end = { x: rect.left + rect.width * 0.12, y: rect.top + rect.height * 0.55 }
-      const start = {
-        x: w * (w < 768 ? 0.78 : 0.68),
-        y: h * (w < 768 ? 0.22 : 0.18),
+      const endRect = cta.getBoundingClientRect()
+      const end = { x: endRect.left + 8, y: endRect.top + endRect.height * 0.75 }
+      const start = introSnapshot?.spinnerScreen ?? {
+        x: window.innerWidth * (window.innerWidth < 768 ? 0.72 : 0.68),
+        y: window.innerHeight * (window.innerWidth < 768 ? 0.2 : 0.24),
       }
-      const overshoot = { x: end.x - w * 0.04, y: end.y - h * 0.03 }
-      const c1 = { x: start.x - w * 0.14, y: start.y + h * 0.06 }
-      const c2 = { x: overshoot.x + w * 0.08, y: overshoot.y - h * 0.04 }
+      const progress = introSnapshot?.webProgress ?? 0
+      const overshoot = {
+        x: end.x + (start.x - end.x) * 0.06 * (1 - progress),
+        y: end.y + (start.y - end.y) * 0.04 * (1 - progress),
+      }
+      const c1 = {
+        x: start.x + (end.x - start.x) * 0.25,
+        y: start.y + (end.y - start.y) * 0.15 + window.innerHeight * 0.04,
+      }
+      const c2 = {
+        x: overshoot.x - window.innerWidth * 0.03,
+        y: overshoot.y - window.innerHeight * 0.02,
+      }
       path.setAttribute(
         'd',
         `M ${start.x} ${start.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${overshoot.x} ${overshoot.y} S ${end.x} ${end.y}, ${end.x} ${end.y}`,
       )
+      const len = path.getTotalLength()
+      path.style.strokeDasharray = `${len}`
+      path.style.strokeDashoffset = `${len * (1 - progress)}`
     }
 
     draw()
     window.addEventListener('resize', draw)
     return () => window.removeEventListener('resize', draw)
-  }, [])
+  }, [introSnapshot])
 
   const onChapterChange = (key: JourneyChapterKey) => setActiveChapter(key)
 
@@ -112,19 +123,35 @@ export default function JourneyExperience() {
         reducedMotion={reducedMotion}
         onChapterChange={onChapterChange}
         onIntroPhase={setIntroPhase}
+        onIntroSnapshot={setIntroSnapshot}
       />
-      <StoryThread rootRef={rootRef} reducedMotion={reducedMotion} />
-      <svg className={styles.heroThread} aria-hidden="true">
+      {activeChapter !== 'hero' && (
+        <StoryThread rootRef={rootRef} reducedMotion={reducedMotion} />
+      )}
+      <svg
+        className={[
+          styles.heroThread,
+          introPhase === 'pulse' || introPhase === 'reveal' || reducedMotion ? styles.heroThreadVisible : '',
+        ].filter(Boolean).join(' ')}
+        aria-hidden="true"
+      >
         <path
           ref={heroThreadRef}
-          className={introPhase === 'pulse' || introPhase === 'reveal' ? styles.heroThreadActive : ''}
           d=""
           fill="none"
           vectorEffect="non-scaling-stroke"
         />
       </svg>
 
-      <JourneyChapter chapterKey="hero" id="hero" index="01" label="Introduction" threadAnchor="hero" className={styles.hero}>
+      <JourneyChapter
+        chapterKey="hero"
+        id="hero"
+        index="01"
+        label="Introduction"
+        hideMeta
+        className={styles.hero}
+      >
+        <div className={styles.heroCopy}>
         <p className={styles.eyebrow}>{profile.title}</p>
         <h1 id="hero-title" className={styles.heroTitle} data-thread-anchor="headline">
           <span className={styles.lineMask}>
@@ -140,6 +167,7 @@ export default function JourneyExperience() {
         <a href={profile.primaryCta.href} className={styles.cta} data-thread-anchor="cta">
           {profile.primaryCta.label}
         </a>
+        </div>
       </JourneyChapter>
 
       <JourneyChapter chapterKey="process" index="02" label="Process" align="right" threadAnchor="process" className={styles.process}>

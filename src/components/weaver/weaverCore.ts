@@ -155,6 +155,15 @@ export class WeaverMixerController {
     }
   }
 
+  stopAllActions(): void {
+    if (this.onFinished) this.mixer.removeEventListener('finished', this.onFinished)
+    this.onFinished = null
+    for (const action of this.actions.values()) {
+      action.stop()
+    }
+    this.current = 'Idle'
+  }
+
   dispose(): void {
     if (this.onFinished) this.mixer.removeEventListener('finished', this.onFinished)
     this.mixer.stopAllAction()

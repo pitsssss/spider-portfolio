@@ -12,6 +12,7 @@ type JourneyChapterProps = {
   label: string
   align?: 'left' | 'right' | 'center'
   threadAnchor?: string
+  hideMeta?: boolean
   className?: string
   children: ReactNode
 }
@@ -23,6 +24,7 @@ export default function JourneyChapter({
   label,
   align = 'left',
   threadAnchor,
+  hideMeta = false,
   className = '',
   children,
 }: JourneyChapterProps) {
@@ -42,11 +44,13 @@ export default function JourneyChapter({
         viewport={{ once: false, amount: 0.35, margin: '-8% 0px -20% 0px' }}
         transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
       >
-        <p className={styles.meta}>
-          <span>{index}</span>
-          <span className={styles.rule} aria-hidden="true" />
-          <span>{label}</span>
-        </p>
+        {!hideMeta && (
+          <p className={styles.meta}>
+            <span>{index}</span>
+            <span className={styles.rule} aria-hidden="true" />
+            <span>{label}</span>
+          </p>
+        )}
         <div className={styles.copy}>{children}</div>
       </motion.div>
     </section>

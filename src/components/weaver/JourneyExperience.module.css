@@ -31,18 +31,18 @@
   height: 100%;
   z-index: 1;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.heroThreadVisible {
+  opacity: 1;
 }
 
 .heroThread path {
-  stroke: rgba(54, 203, 232, 0.55);
-  stroke-width: 1.4;
-  stroke-dasharray: 220;
-  stroke-dashoffset: 220;
-  transition: stroke-dashoffset 1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.heroThreadActive {
-  stroke-dashoffset: 0 !important;
+  stroke: rgba(54, 203, 232, 0.62);
+  stroke-width: 1.35;
+  stroke-linecap: round;
 }
 
 .chapter {
@@ -50,6 +50,13 @@
   z-index: 2;
   min-width: 0;
   padding: 0 8vw;
+}
+
+@media (min-width: 1100px) {
+  .chapter {
+    padding-left: clamp(32px, 3vw, 64px);
+    padding-right: clamp(32px, 3vw, 64px);
+  }
 }
 
 .inner {
@@ -223,17 +230,35 @@
 .hero {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  padding-top: 10vh;
+  align-items: flex-start;
+  padding-top: 0;
   padding-bottom: 12vh;
 }
 
 .hero .inner {
-  max-width: 48rem;
+  max-width: none;
+  width: 100%;
+  margin: 0;
 }
 
-.hero .copy {
-  max-width: min(36rem, 52vw);
+.heroCopy {
+  max-width: min(690px, 42vw);
+  width: 100%;
+  margin-top: clamp(27vh, 29vh, 31vh);
+  margin-left: clamp(5vw, 6vw, 7vw);
+}
+
+@media (min-width: 1100px) {
+  .heroTitle {
+    max-width: 46vw;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1099px) {
+  .heroCopy {
+    max-width: min(690px, 50vw);
+    margin-left: clamp(4vw, 5vw, 6vw);
+  }
 }
 
 .process { min-height: 120vh; display: flex; align-items: center; }
@@ -375,16 +400,38 @@
   transform: none !important;
 }
 
+.static .heroThreadVisible,
+.static .heroThread {
+  opacity: 0.35;
+}
+
+.static .heroThread path {
+  stroke-dashoffset: 0 !important;
+}
+
 @media (max-width: 900px) {
   .chapter { padding: 0 20px; }
-  .hero { min-height: 100vh; padding-top: 18vh; align-items: flex-start; }
-  .hero .copy { max-width: 100%; }
+  .hero { min-height: 100vh; padding-top: 0; align-items: flex-start; }
+  .heroCopy {
+    max-width: 100%;
+    margin-left: 0;
+    margin-top: clamp(16vh, 18vh, 22vh);
+    padding-right: 38vw;
+  }
   .process, .skills, .about, .contact { min-height: 100vh; }
   .project { min-height: 95vh; }
   .projectLayout { grid-template-columns: 1fr; gap: 28px; }
   .artPlane { order: -1; min-height: 180px; }
   .right .copy, .left .copy { margin-left: 0; max-width: 100%; }
-  .heroThread { display: none; }
+  .heroThread { display: block; }
+}
+
+@media (max-width: 767px) {
+  .heroCopy {
+    padding-right: 0;
+    max-width: 92%;
+  }
+  .heroThread path { stroke-width: 1.1; }
 }
 
 @media (max-width: 390px) {

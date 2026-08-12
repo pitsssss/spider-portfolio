@@ -5,19 +5,31 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import {
   getChapterPoses,
+  HERO_YAW,
   interpolatePose,
   INTRO_SESSION_KEY,
   JOURNEY_CHAPTER_ORDER,
   resolveProjectClip,
   type JourneyChapterKey,
 } from './chapterConfig'
+import {
+  computeIntroSnapshot,
+  findNode,
+  fitModelToHeroRegion,
+  getHeroScreenBounds,
+  getIntroTimings,
+  HeroJointController,
+  normalizeModelVisual,
+  projectWorldToScreen,
+  tuneWeaverMaterials,
+  validateRearFacing,
+  type IntroSnapshot,
+} from './heroIntro'
 import { WEAVER_MAX_DPR, WEAVER_MODEL_URL, type WeaverClip } from './weaverConfig'
 import {
   disposeObject,
-  frameModelRoot,
   getViewportTier,
   hasWebGL,
-  liftWeaverMaterials,
   smoothstep,
   WeaverMixerController,
 } from './weaverCore'
@@ -28,6 +40,7 @@ type WeaverJourneyProps = {
   reducedMotion: boolean
   onChapterChange?: (key: JourneyChapterKey, progress: number) => void
   onIntroPhase?: (phase: IntroPhase) => void
+  onIntroSnapshot?: (snapshot: IntroSnapshot) => void
 }
 
 export type IntroPhase = 'pending' | 'environment' | 'descend' | 'settle' | 'pulse' | 'reveal' | 'idle' | 'skipped'
@@ -88,21 +101,20 @@ function easeOutCubic(t: number): number {
   return 1 - (1 - t) ** 3
 }
 
-function easeInOut(t: number): number {
-  return smoothstep(t)
-}
-
 export default function WeaverJourney({
   rootRef,
   reducedMotion,
   onChapterChange,
   onIntroPhase,
+  onIntroSnapshot,
 }: WeaverJourneyProps) {
   const hostRef = useRef<HTMLDivElement>(null)
   const onChapterChangeRef = useRef(onChapterChange)
   const onIntroPhaseRef = useRef(onIntroPhase)
+  const onIntroSnapshotRef = useRef(onIntroSnapshot)
   onChapterChangeRef.current = onChapterChange
   onIntroPhaseRef.current = onIntroPhase
+  onIntroSnapshotRef.current = onIntroSnapshot
 
   useEffect(() => {
     const host = hostRef.current
@@ -124,11 +136,15 @@ export default function WeaverJourney({
     let lastClip: WeaverClip | null = null
     const played = new Set<string>()
     let mixer: WeaverMixerController | null = null
+    let joints: HeroJointController | null = null
+    let spinnerRig: THREE.Object3D | null = null
     const pointer = { tx: 0, ty: 0 }
     let introActive = false
     let introStart = 0
     let introSkipped = false
+    let introBlending = false
     let modelReady = false
+    let heroFitScale = 1
 
     try {
       introActive = !reducedMotion && !sessionStorage.getItem(INTRO_SESSION_KEY) && window.scrollY < 24
@@ -148,7 +164,7 @@ export default function WeaverJourney({
     renderer.setClearColor(0x000000, 0)
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.ACESFilmicToneMapping
-    renderer.toneMappingExposure = 1.28
+    renderer.toneMappingExposure = 1.26
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
     host.appendChild(renderer.domElement)
@@ -157,10 +173,10 @@ export default function WeaverJourney({
     const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 50)
     const clock = new THREE.Clock()
 
-    const hemi = new THREE.HemisphereLight(0xcadde3, 0xeee9df, 0.85)
+    const hemi = new THREE.HemisphereLight(0xcadde3, 0xeee9df, 0.9)
     scene.add(hemi)
 
-    const keyLight = new THREE.DirectionalLight(0xfff4e5, 2.35)
+    const keyLight = new THREE.DirectionalLight(0xfff4e5, 2.2)
     keyLight.position.set(-3.4, 5.8, 4.2)
     keyLight.castShadow = true
     keyLight.shadow.mapSize.set(1024, 1024)
@@ -174,16 +190,16 @@ export default function WeaverJourney({
     keyLight.shadow.camera.bottom = -5
     scene.add(keyLight)
 
-    const cyanRim = new THREE.DirectionalLight(0x36cbe8, 0.9)
+    const cyanRim = new THREE.DirectionalLight(0x36cbe8, 0.85)
     cyanRim.position.set(4.2, 2.4, -2.8)
     scene.add(cyanRim)
 
-    const fillLight = new THREE.PointLight(0xffffff, 0.55, 16)
-    fillLight.position.set(1.2, 2.4, 3.6)
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.65)
+    fillLight.position.set(-1.5, 2.8, 5.5)
     scene.add(fillLight)
 
-    const amberAccent = new THREE.PointLight(0xf3a63b, 0.35, 8)
-    amberAccent.position.set(1.4, 1.1, 0.8)
+    const amberAccent = new THREE.PointLight(0xf3a63b, 0.28, 8)
+    amberAccent.position.set(0.8, 0.9, 1.2)
     scene.add(amberAccent)
 
     const floor = new THREE.Mesh(
@@ -211,18 +227,20 @@ export default function WeaverJourney({
 
     const journeyGroup = new THREE.Group()
     scene.add(journeyGroup)
-    const modelMount = new THREE.Group()
-    journeyGroup.add(modelMount)
-    const introOffset = new THREE.Group()
-    modelMount.add(introOffset)
+    const placementGroup = new THREE.Group()
+    journeyGroup.add(placementGroup)
+    const introMotionGroup = new THREE.Group()
+    placementGroup.add(introMotionGroup)
+    const modelVisual = new THREE.Group()
+    introMotionGroup.add(modelVisual)
 
     const hangThread = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.004, 0.004, 4.5, 6),
-      new THREE.MeshBasicMaterial({ color: 0x36cbe8, transparent: true, opacity: 0.45 }),
+      new THREE.CylinderGeometry(0.003, 0.003, 1, 6),
+      new THREE.MeshBasicMaterial({ color: 0xe8e4dc, transparent: true, opacity: 0.72 }),
     )
-    hangThread.position.y = 2.4
     hangThread.visible = false
-    journeyGroup.add(hangThread)
+    scene.add(hangThread)
+    const hangMat = hangThread.material as THREE.MeshBasicMaterial
 
     const fit = () => {
       const width = Math.max(window.innerWidth, 1)
@@ -232,7 +250,24 @@ export default function WeaverJourney({
       renderer.setSize(width, height, false)
     }
 
-    const applyPose = (pose: ReturnType<typeof interpolatePose>, yBoost = 0) => {
+    const refitHero = () => {
+      if (!modelReady) return
+      const bounds = getHeroScreenBounds(tier, window.innerWidth)
+      const hero = poses.hero
+      applyPose(hero, 0, false)
+      const copyEl = root.querySelector<HTMLElement>('.heroCopy')
+      const copyRight = copyEl?.getBoundingClientRect().right
+      heroFitScale = fitModelToHeroRegion(
+        placementGroup,
+        modelVisual,
+        camera,
+        bounds,
+        HERO_YAW,
+        copyRight,
+      )
+    }
+
+    const applyPose = (pose: ReturnType<typeof interpolatePose>, yBoost = 0, refit = true) => {
       journeyGroup.position.set(pose.model.position.x, pose.model.position.y + yBoost, pose.model.position.z)
       journeyGroup.rotation.set(pose.model.rotation.x, pose.model.rotation.y, pose.model.rotation.z)
       journeyGroup.scale.setScalar(pose.model.scale)
@@ -241,95 +276,143 @@ export default function WeaverJourney({
       keyLight.intensity = pose.lights.key
       cyanRim.intensity = pose.lights.rim
       fillLight.intensity = pose.lights.fill
-      contactShadow.position.x = pose.model.position.x
-      contactShadow.position.z = pose.model.position.z
-      contactShadow.scale.setScalar(0.85 + pose.model.scale * 0.35)
+      contactShadow.position.x = journeyGroup.position.x + placementGroup.position.x
+      contactShadow.position.z = journeyGroup.position.z
+      contactShadow.scale.setScalar(0.75 + heroFitScale * 0.25)
+      if (refit && modelReady) refitHero()
+    }
+
+    const updateHangThread = () => {
+      if (!spinnerRig || !hangThread.visible) return
+      const top = new THREE.Vector3()
+      const anchor = new THREE.Vector3()
+      spinnerRig.getWorldPosition(anchor)
+      top.set(anchor.x, anchor.y + 3.8, anchor.z)
+      const mid = top.clone().lerp(anchor, 0.5)
+      const len = top.distanceTo(anchor)
+      hangThread.scale.set(1, len, 1)
+      hangThread.position.copy(mid)
+      hangThread.lookAt(anchor)
+      hangThread.rotateX(Math.PI / 2)
+    }
+
+    const emitSnapshot = (snapshot: IntroSnapshot) => {
+      if (spinnerRig && snapshot.phase !== 'establish') {
+        snapshot.spinnerScreen = projectWorldToScreen(
+          spinnerRig,
+          camera,
+          window.innerWidth,
+          window.innerHeight,
+        )
+      }
+      onIntroSnapshotRef.current?.(snapshot)
     }
 
     const finishIntro = (phase: IntroPhase = 'idle') => {
       introActive = false
       introSkipped = true
+      introBlending = false
       hangThread.visible = false
-      introOffset.position.set(0, 0, 0)
-      introOffset.rotation.set(0, 0, 0)
+      introMotionGroup.position.set(0, 0, 0)
+      introMotionGroup.rotation.set(0, 0, 0)
+      joints?.resetAll()
       try {
         sessionStorage.setItem(INTRO_SESSION_KEY, '1')
       } catch {
         /* ignore */
       }
       onIntroPhaseRef.current?.(phase)
-      if (mixer && mixer.getCurrent() !== 'Idle') mixer.play('Idle')
-      lastClip = 'Idle'
+      if (mixer) {
+        mixer.play('Idle')
+        lastClip = 'Idle'
+      }
     }
 
     const runIntro = (elapsed: number) => {
       const hero = poses.hero
+      const timings = getIntroTimings(tier)
       const t = elapsed
-      const mobile = tier === 'mobile'
-      const descendEnd = mobile ? 1.7 : 2.3
-      const settleEnd = mobile ? 2.3 : 3.1
-      const pulseEnd = mobile ? 3.1 : 4.1
-      const revealEnd = mobile ? 4.2 : 5.4
+      const snap = computeIntroSnapshot(t, timings)
+      applyPose(hero, 0, false)
 
-      if (t < 0.6) {
+      if (t < timings.establish) {
         onIntroPhaseRef.current?.('environment')
-        applyPose(hero, 2.4)
+        introMotionGroup.position.y = 2.2
         hangThread.visible = true
-        hangThread.material.opacity = t / 0.6 * 0.45
+        hangMat.opacity = 0.72 * (t / timings.establish)
+        joints?.beginFrame()
+        joints?.applyFold(1)
+        emitSnapshot(snap)
+        updateHangThread()
         return
       }
 
-      if (t < descendEnd) {
+      if (t < timings.descendEnd) {
         onIntroPhaseRef.current?.('descend')
-        const u = easeOutCubic((t - 0.6) / (descendEnd - 0.6))
-        const y = 2.6 * (1 - u)
-        const sway = Math.sin(t * 2.1) * 0.08 * (1 - u * 0.5)
-        applyPose(hero, y)
-        introOffset.rotation.z = sway
-        introOffset.rotation.x = Math.sin(t * 1.4) * 0.04
+        const u = easeOutCubic((t - timings.establish) / (timings.descendEnd - timings.establish))
+        const arcX = Math.sin(u * Math.PI) * (tier === 'mobile' ? 0.04 : 0.07)
+        introMotionGroup.position.y = 2.2 * (1 - u)
+        introMotionGroup.position.x = arcX
+        introMotionGroup.rotation.z = Math.sin(t * 1.8) * 0.035 * (1 - u)
+        introMotionGroup.rotation.y = Math.sin(t * 1.2) * 0.04 * (1 - u)
         hangThread.visible = true
-        hangThread.position.y = 2.4 + y * 0.15
-        if (mixer && lastClip !== 'Descend') {
-          mixer.play('Descend')
-          lastClip = 'Descend'
-        }
-        camera.position.z = hero.camera.position.z + (1 - u) * 0.55
+        joints?.beginFrame()
+        joints?.applyDescent(u, 1 - u * 0.55, {
+          roll: Math.sin(t * 1.8) * 0.035 * (1 - u),
+          yaw: Math.sin(t * 1.2) * 0.04 * (1 - u),
+        })
+        emitSnapshot(snap)
+        updateHangThread()
         return
       }
 
-      if (t < settleEnd) {
+      if (t < timings.settleEnd) {
         onIntroPhaseRef.current?.('settle')
-        applyPose(hero, 0)
-        introOffset.rotation.z *= 0.92
+        const u = (t - timings.descendEnd) / (timings.settleEnd - timings.descendEnd)
+        const rebound = Math.sin(u * Math.PI) * 0.12
+        introMotionGroup.position.y = rebound * 0.08
+        introMotionGroup.position.x *= 0.92
+        introMotionGroup.rotation.z *= 0.88
         hangThread.visible = true
-        if (mixer && lastClip !== 'Land' && lastClip !== 'Idle') {
-          mixer.play('Land')
-          lastClip = 'Land'
-        }
+        joints?.beginFrame()
+        joints?.applySettle(u, rebound)
+        joints?.setSpinnerPulse(Math.sin(u * Math.PI))
+        emitSnapshot(snap)
+        updateHangThread()
         return
       }
 
-      if (t < pulseEnd) {
+      if (t < timings.webEnd) {
         onIntroPhaseRef.current?.('pulse')
-        applyPose(hero, 0)
+        introMotionGroup.position.y = 0
         hangThread.visible = true
-        if (mixer && lastClip !== 'WebPulse') {
-          mixer.play('WebPulse')
-          lastClip = 'WebPulse'
-        }
+        joints?.beginFrame()
+        joints?.applyWebShot(snap.webProgress, snap.threadTension)
+        emitSnapshot(snap)
+        updateHangThread()
         return
       }
 
-      if (t < revealEnd) {
+      if (t < timings.revealEnd) {
         onIntroPhaseRef.current?.('reveal')
-        applyPose(hero, 0)
-        hangThread.material.opacity = 0.45 * (1 - easeInOut((t - pulseEnd) / (revealEnd - pulseEnd)))
+        hangThread.visible = snap.threadTension > 0.15
+        joints?.beginFrame()
+        joints?.applyWebShot(1, snap.threadTension * 0.35)
+        emitSnapshot(snap)
+        updateHangThread()
         return
       }
 
+      if (!introBlending) {
+        introBlending = true
+        joints?.startBlendOut()
+      }
+      const blended = joints?.updateBlendOut(400) ?? true
       hangThread.visible = false
-      applyPose(hero, 0)
-      finishIntro('idle')
+      emitSnapshot(snap)
+      if (blended && t >= timings.total) {
+        finishIntro('idle')
+      }
     }
 
     const updateScene = () => {
@@ -351,8 +434,8 @@ export default function WeaverJourney({
           onChapterChangeRef.current?.(scroll.key, scroll.global)
         }
         if (mixer.getCurrent() === 'Idle') {
-          modelMount.rotation.y += (pointer.tx * 0.05 - modelMount.rotation.y) * 0.035
-          modelMount.rotation.x += (pointer.ty * 0.03 - modelMount.rotation.x) * 0.035
+          modelVisual.rotation.y += (pointer.tx * 0.03 - modelVisual.rotation.y) * 0.03
+          modelVisual.rotation.x += (pointer.ty * 0.02 - modelVisual.rotation.x) * 0.03
         }
       }
     }
@@ -362,7 +445,7 @@ export default function WeaverJourney({
       frame = requestAnimationFrame(loop)
       if (document.hidden) return
       const dt = clock.getDelta()
-      mixer?.update(dt)
+      if (!introActive || introSkipped) mixer?.update(dt)
 
       if (introActive && !introSkipped && modelReady) {
         if (!introStart) introStart = performance.now()
@@ -395,6 +478,7 @@ export default function WeaverJourney({
       }
       segments = collectSegments(root)
       fit()
+      refitHero()
       updateScene()
     }
 
@@ -425,19 +509,27 @@ export default function WeaverJourney({
             object.receiveShadow = true
           }
         })
-        liftWeaverMaterials(gltf.scene)
-        introOffset.add(gltf.scene)
-        frameModelRoot(gltf.scene)
+        tuneWeaverMaterials(gltf.scene)
+        normalizeModelVisual(modelVisual, gltf.scene)
+        joints = new HeroJointController(gltf.scene)
+        spinnerRig = findNode(gltf.scene, 'SpinnerRig')
+        const headRig = findNode(gltf.scene, 'HeadRig')
         mixer = new WeaverMixerController(gltf.scene, gltf.animations)
+
+        applyPose(poses.hero, 0, false)
+        refitHero()
+        validateRearFacing(headRig, spinnerRig, camera)
+
         if (reducedMotion) {
           mixer.pauseIdle()
-          applyPose(poses.hero)
           onIntroPhaseRef.current?.('idle')
         } else if (!introActive) {
           mixer.play('Idle')
           lastClip = 'Idle'
-          applyPose(poses.hero)
+        } else {
+          mixer.stopAllActions()
         }
+
         modelReady = true
         updateScene()
         frame = requestAnimationFrame(loop)
@@ -450,7 +542,7 @@ export default function WeaverJourney({
     )
 
     if (reducedMotion) {
-      applyPose(poses.hero)
+      applyPose(poses.hero, 0, false)
       renderer.render(scene, camera)
     }
 
