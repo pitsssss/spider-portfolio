@@ -4,14 +4,10 @@ import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { WEAVER_MODEL_URL, WEAVER_CROSSFADE, WEAVER_LOOPING, WEAVER_CLIPS, type WeaverClip } from './weaverConfig'
 import styles from './WeaverLab.module.css'
 
-const MODEL_URL = '/models/weaver-01.glb'
-const FADE = 0.3
-const CLIPS = ['Idle', 'Crawl', 'Descend', 'Land', 'Inspect', 'WebPulse'] as const
-const LOOPING = new Set<ClipName>(['Idle', 'Crawl'])
-
-type ClipName = (typeof CLIPS)[number]
+type ClipName = WeaverClip
 type Status = 'loading' | 'ready' | 'nowebgl' | 'error'
 
 function hasWebGL(): boolean {
@@ -165,13 +161,16 @@ export default function WeaverLab() {
       }
       next.reset()
       next.enabled = true
-      next.clampWhenFinished = !LOOPING.has(name)
-      next.setLoop(LOOPING.has(name) ? THREE.LoopRepeat : THREE.LoopOnce, LOOPING.has(name) ? Infinity : 1)
-      if (prev && prev !== next) prev.fadeOut(FADE)
-      next.fadeIn(FADE).play()
+      next.clampWhenFinished = !WEAVER_LOOPING.has(name)
+      next.setLoop(
+        WEAVER_LOOPING.has(name) ? THREE.LoopRepeat : THREE.LoopOnce,
+        WEAVER_LOOPING.has(name) ? Infinity : 1,
+      )
+      if (prev && prev !== next) prev.fadeOut(WEAVER_CROSSFADE)
+      next.fadeIn(WEAVER_CROSSFADE).play()
       current = name
       setActive(name)
-      if (!LOOPING.has(name)) {
+      if (!WEAVER_LOOPING.has(name)) {
         finished = (event) => {
           if (event.action !== next) return
           playClip('Idle')
@@ -208,7 +207,7 @@ export default function WeaverLab() {
 
     const loader = new GLTFLoader()
     loader.load(
-      MODEL_URL,
+      WEAVER_MODEL_URL,
       (gltf) => {
         if (disposed) {
           disposeObject(gltf.scene)
@@ -224,7 +223,7 @@ export default function WeaverLab() {
         frameModel(rig)
 
         mixer = new THREE.AnimationMixer(gltf.scene)
-        for (const name of CLIPS) {
+        for (const name of WEAVER_CLIPS) {
           const clip = THREE.AnimationClip.findByName(gltf.animations, name)
           if (!clip) continue
           actions.set(name, mixer.clipAction(clip))
@@ -287,7 +286,7 @@ export default function WeaverLab() {
             {status === 'loading' && <p className={styles.status}>Loading model</p>}
           </header>
           <div className={styles.dock} role="toolbar" aria-label="WEAVER-01 animation clips">
-            {CLIPS.map((name) => (
+            {WEAVER_CLIPS.map((name) => (
               <button
                 key={name}
                 type="button"

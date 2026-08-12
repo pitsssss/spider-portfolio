@@ -1,5 +1,5 @@
-import Navbar from '@/components/Navbar'
-import StoryExperience from '@/components/story/StoryExperience'
+import NavRail from '@/components/NavRail'
+import JourneyExperience from '@/components/weaver/JourneyExperience'
 import { SITE_URL } from '@/content/site'
 import { profile } from '@/content/profile'
 import { socialLinks } from '@/content/social'
@@ -27,9 +27,9 @@ export default function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <Navbar />
+      <NavRail />
       <main id="main-content">
-        <StoryExperience />
+        <JourneyExperience />
       </main>
     </>
   )

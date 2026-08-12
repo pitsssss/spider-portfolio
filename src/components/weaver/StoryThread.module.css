@@ -1,0 +1,42 @@
+.thread {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.glow {
+  fill: none;
+  stroke: rgba(120, 231, 255, 0.12);
+  stroke-width: 8;
+  stroke-linecap: round;
+  filter: blur(6px);
+}
+
+.line {
+  fill: none;
+  stroke: rgba(120, 231, 255, 0.34);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+@media (max-width: 768px) {
+  .glow {
+    stroke-width: 5;
+    opacity: 0.7;
+  }
+
+  .line {
+    stroke-width: 1;
+    opacity: 0.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thread {
+    opacity: 0.35;
+  }
+}
