@@ -1,0 +1,111 @@
+import type { Project } from './types'
+
+export const projects: Project[] = [
+  {
+    slug: 'syrtak',
+    title: 'SYRTAK — Digital License Management System',
+    shortTitle: 'SYRTAK',
+    category: 'Government Digital Transformation',
+    summary:
+      'An end-to-end platform that digitizes driving-license services and controlled governmental workflows.',
+    description:
+      'An end-to-end platform that digitizes driving-license services and controlled governmental workflows.',
+    role: 'Full-Stack Software Engineer • System Analyst • Project Owner',
+    featured: true,
+    nda: false,
+    stack: [
+      'Laravel',
+      'PHP',
+      'MySQL',
+      'Next.js',
+      'React',
+      'TypeScript',
+      'REST APIs',
+      'Sanctum',
+      'RBAC',
+      'Firebase',
+      'Gemini API',
+      'AI Agents',
+      'Docker',
+      'UML',
+    ],
+    highlights: [
+      'Owned the SDLC from requirements and business analysis through architecture, implementation, testing and deployment readiness.',
+      'Produced SRS documentation, business rules, use cases, UML models, database schemas and REST API contracts.',
+      'Engineered the Laravel and MySQL backend, authentication, RBAC, audit logging, secure document handling and licensing workflows.',
+      'Developed the Next.js, React and TypeScript administrative dashboard.',
+      'Integrated Firebase notifications and a Gemini-powered transactional AI agent.',
+      'Added automated feature, integration, security and authorization tests.',
+    ],
+    image: '/projects/gov-dlms.svg',
+    caseStudyAvailable: false,
+  },
+  {
+    slug: 'qasioun-journey',
+    title: 'Qasioun Journey',
+    category: 'Government Investment & Tourism',
+    summary: 'A large-scale digital platform for investment and tourism experiences.',
+    description: 'A large-scale digital platform for investment and tourism experiences.',
+    role: 'Frontend Software Engineer',
+    featured: true,
+    nda: false,
+    stack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'REST APIs', 'SSR', 'RTL'],
+    highlights: [
+      'Developed and maintained production frontend features using Next.js, React and TypeScript.',
+      'Built reusable frontend structures and integrated backend services and dynamic content.',
+      'Delivered responsive behavior across mobile, tablet and desktop.',
+      'Improved rendering strategy, performance, Arabic RTL behavior, accessibility and user-flow clarity.',
+      'Collaborated with backend, design, QA and product teams.',
+    ],
+    image: '/projects/journey.svg',
+    liveUrl: 'https://qasiounjourney.com',
+    caseStudyAvailable: false,
+  },
+  {
+    slug: 'fatleh',
+    title: 'FATLEH — Smart Tourism Application',
+    shortTitle: 'FATLEH',
+    category: 'Backend Engineering',
+    summary:
+      'Backend engineering for a tourism application covering bookings, flights, payments and notifications.',
+    description:
+      'Backend engineering for a tourism application covering bookings, flights, payments and notifications.',
+    role: 'Backend Software Engineer',
+    featured: true,
+    nda: false,
+    stack: ['Laravel 11', 'PHP', 'MySQL', 'REST APIs', 'Amadeus API', 'Stripe', 'Firebase'],
+    highlights: [
+      'Developed the Laravel backend and REST APIs for Flutter integration.',
+      'Implemented authentication, validation, database architecture and administrative workflows.',
+      'Integrated Amadeus flight search and booking.',
+      'Integrated Stripe payments and Firebase-backed notifications.',
+      'Applied caching and eager loading for performance.',
+    ],
+    image: '/projects/fatleh-app.svg',
+    caseStudyAvailable: false,
+  },
+  {
+    slug: 'syria-explorer',
+    title: 'Syria Explorer',
+    category: 'Product & Frontend Engineering',
+    summary:
+      'A founder-led public prototype showcasing Syrian destinations, heritage and travel content.',
+    description:
+      'A founder-led public prototype showcasing Syrian destinations, heritage and travel content.',
+    role: 'Founder • Frontend Software Engineer',
+    featured: true,
+    nda: false,
+    stack: ['Next.js', 'React', 'TypeScript', 'SEO', 'Performance Optimization'],
+    highlights: [
+      'Built the Next.js frontend and scalable content architecture.',
+      'Applied technical SEO and performance optimization.',
+      'Integrated a lightweight content workflow.',
+      'Deployed and maintained the public prototype.',
+    ],
+    image: '/projects/syria-explorer.svg',
+    liveUrl: 'https://syriaexplorer.com',
+    caseStudyAvailable: false,
+  },
+]
+
+export const featuredProjects = projects.filter((project) => project.featured)
