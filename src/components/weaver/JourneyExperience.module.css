@@ -10,9 +10,9 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 80% 60% at 78% 38%, rgba(54, 203, 232, 0.12), transparent 55%),
-    radial-gradient(ellipse 55% 45% at 12% 78%, rgba(202, 221, 227, 0.55), transparent 60%),
-    linear-gradient(180deg, #f5f1e8 0%, #eee9df 45%, #e7eef2 100%);
+    radial-gradient(ellipse 70% 55% at 82% 42%, rgba(238, 233, 223, 0.55), transparent 58%),
+    radial-gradient(ellipse 50% 40% at 14% 72%, rgba(245, 241, 232, 0.65), transparent 62%),
+    linear-gradient(180deg, #f5f1e8 0%, #eee9df 52%, #ebe6dc 100%);
 }
 
 .atmosphere::after {
@@ -246,6 +246,40 @@
   width: 100%;
   margin-top: clamp(27vh, 29vh, 31vh);
   margin-left: clamp(5vw, 6vw, 7vw);
+  position: relative;
+  padding: 18px 22px 22px 0;
+}
+
+.heroCopy::before {
+  content: '';
+  position: absolute;
+  inset: -12px -28px -18px -18px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 90% 85% at 18% 42%, rgba(245, 241, 232, 0.92), transparent 72%);
+}
+
+.copyShieldLeft,
+.copyShieldRight {
+  position: relative;
+  padding: 12px 0;
+}
+
+.copyShieldLeft::before,
+.copyShieldRight::before {
+  content: '';
+  position: absolute;
+  inset: -8px -20px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.copyShieldLeft::before {
+  background: radial-gradient(ellipse 85% 80% at 12% 50%, rgba(245, 241, 232, 0.88), transparent 70%);
+}
+
+.copyShieldRight::before {
+  background: radial-gradient(ellipse 85% 80% at 88% 50%, rgba(245, 241, 232, 0.88), transparent 70%);
 }
 
 @media (min-width: 1100px) {

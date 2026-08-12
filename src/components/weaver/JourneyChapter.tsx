@@ -34,6 +34,7 @@ export default function JourneyChapter({
     <section
       id={id}
       data-journey-chapter={chapterKey}
+      data-content-align={align}
       data-thread-anchor={threadAnchor ?? chapterKey}
       className={`${styles.chapter} ${styles[align]} ${className}`.trim()}
     >
