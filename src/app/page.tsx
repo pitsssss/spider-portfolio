@@ -1,12 +1,5 @@
 import Navbar from '@/components/Navbar'
-import HeroSection from '@/components/HeroSection'
-import ProjectsSection from '@/components/ProjectsSection'
-import SkillsSection from '@/components/SkillsSection'
-import ExperienceSection from '@/components/ExperienceSection'
-import AboutSection from '@/components/AboutSection'
-import ContactSection from '@/components/ContactSection'
-import Footer from '@/components/Footer'
-import RevealOnScroll from '@/components/RevealOnScroll'
+import StoryExperience from '@/components/story/StoryExperience'
 import { SITE_URL } from '@/content/site'
 import { profile } from '@/content/profile'
 import { socialLinks } from '@/content/social'
@@ -34,17 +27,10 @@ export default function HomePage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <RevealOnScroll />
       <Navbar />
       <main id="main-content">
-        <HeroSection />
-        <ProjectsSection />
-        <SkillsSection />
-        <ExperienceSection />
-        <AboutSection />
-        <ContactSection />
+        <StoryExperience />
       </main>
-      <Footer />
     </>
   )
 }

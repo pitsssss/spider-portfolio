@@ -6,11 +6,24 @@ import { profile } from '@/content/profile'
 export default function Navbar() {
   const [active, setActive] = useState('hero')
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   useEffect(() => {
     const obs = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id) }),
-      { threshold: 0.3 },
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
+        if (visible[0]?.target.id) setActive(visible[0].target.id)
+      },
+      { threshold: [0, 0.08, 0.2], rootMargin: '-28% 0px -48% 0px' },
     )
     navItems.forEach(({ id }) => {
       const el = document.getElementById(id)
@@ -20,7 +33,7 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className="site-nav" role="navigation" aria-label="Primary">
+    <nav className={scrolled ? 'site-nav is-scrolled' : 'site-nav'} role="navigation" aria-label="Primary">
       <div className="site-nav-inner">
         <a href="#hero" className="wordmark" aria-label={`${profile.name}, home`}>
           PT
@@ -45,8 +58,8 @@ export default function Navbar() {
           aria-expanded={open}
           aria-controls="mobile-nav"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-            {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+            {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
           </svg>
         </button>
       </div>
